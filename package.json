@@ -1,0 +1,48 @@
+{
+  "name": "scratch",
+  "version": "1.0.0",
+  "description": "tbd",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development concurrently \"nodemon server.js\" \"webpack-dev-server --open\"",
+    "start": "cross-env NODE_ENV=production nodemon server/server.js",
+    "build": " NODE_ENV=production webpack",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mdigel/ubiquitous-spoon.git"
+  },
+  "author": "us",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mdigel/ubiquitous-spoon/issues"
+  },
+  "homepage": "https://github.com/mdigel/ubiquitous-spoon#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router": "^5.2.0"
+    
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-react": "^7.10.1",
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^8.1.0",
+    "concurrently": "^5.2.0",
+    "cross-env": "^7.0.2",
+    "css-loader": "^3.5.3",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5",
+    "sass-loader": "^8.0.2",
+    "style-loader": "^1.2.1",
+    "webpack": "^4.43.0",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-cli": "^3.3.11"
+  }
+}
