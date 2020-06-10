@@ -9,6 +9,9 @@
   },
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "commonjs": true,
+    "shared-node-browser": true,
+    "es6": true
   }
 }
