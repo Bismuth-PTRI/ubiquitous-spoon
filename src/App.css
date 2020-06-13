@@ -1,5 +1,16 @@
 @import '../node_modules/antd/dist/antd.css';
 
 body {
-  background: orange;
+  background: lightgrey;
+}
+
+.layout {
+  height: 100vh;
+}
+
+.site-layout-content {
+  background: #fff;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
 }
