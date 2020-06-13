@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-console */
 const path = require('path');
 const morgan = require('morgan');
@@ -6,6 +7,7 @@ const colors = require('colors');
 const express = require('express');
 const pg = require('pg');
 const bcrypt = require('bcryptjs');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
@@ -42,8 +44,7 @@ const checkUsername = (req, res, next) => {
 };
 
 const checkPassword = (req, res, next) => {
-  const password1 = req.body.password1;
-  const password2 = req.body.password2;
+  const { password1, password2 } = req.body;
 
   if (password1 !== password2) {
     return next({ log: 'checkPassword', message: { err: 'Passwords must match ' } });
@@ -68,9 +69,21 @@ const addUser = (req, res, next) => {
   });
 };
 
+const createSession = (req, res, next) => {
+  const ssid = uuidv4();
+  const text = `INSERT INTO ubiquitous_spoon.sessions (id, created_at) VALUES('${ssid}', current_timestamp);`;
+  pool.query(text, (err, response) => {
+    if (err) {
+      return next({ log: 'createSession', message: { err: 'Error in createSession' } });
+    }
+    res.cookie('ssid', ssid, { httpOnly: true });
+    next();
+  });
+};
+
 // Check whether username already exists
-app.post('/api/signup', checkUsername, checkPassword, addUser, (req, res) => {
-  res.status(200).json({ username: res.locals.username });
+app.post('/api/signup', checkUsername, checkPassword, addUser, createSession, (req, res) => {
+  res.status(200).json({ success: true, username: res.locals.username });
 });
 
 // Error handler
@@ -82,7 +95,7 @@ const errorHandler = (err, req, res, next) => {
     message: { err: 'An error occurred' },
   };
   const errorObj = Object.assign(defaultErr, err);
-  console.log(errorObj.log);
+  console.log(`${errorObj.log}`.brightRed);
   res.status(errorObj.status).send(JSON.stringify(errorObj.message));
 };
 
