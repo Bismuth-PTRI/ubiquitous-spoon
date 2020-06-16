@@ -5,7 +5,11 @@ const morgan = require('morgan');
 // eslint-disable-next-line no-unused-vars
 const colors = require('colors');
 const express = require('express');
-const usersRouter = require('./routes/users');
+const signup = require('./routes/signup');
+const login = require('./routes/login');
+const favorites = require('./routes/favorites');
+const logout = require('./routes/logout');
+const userInfo = require('./routes/userinfo');
 
 const app = express();
 
@@ -17,8 +21,12 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Check whether username already exists
-app.use('/api/signup', usersRouter);
+// Routes
+app.use('/api/signup', signup);
+app.use('/api/login', login);
+app.use('/api/logout', logout);
+app.use('/api/user/info', userInfo);
+app.use('/api/favorites', favorites);
 
 // Error handler
 const errorHandler = (err, req, res, next) => {

@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Form, Input, Tooltip, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
+import { connect } from 'react-redux';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import * as actions from '../actions/actions';
 
 const formItemLayout = {
   labelCol: {
@@ -33,12 +36,70 @@ const tailFormItemLayout = {
   },
 };
 
-const SignUp = () => {
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = (dispatch) => ({
+  setUsername: (username) => {
+    console.log('in setUsername in MapDispatchToProps');
+    dispatch(actions.setUser(username));
+  },
+});
+
+const SignUp = (props) => {
+  const [redirect, setRedirect] = useState(false);
+  const [usernameCheck, setUsernameCheck] = useState(false);
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
+
+    //["gluten free", "vegetarian", "vegan"]
+
+    const glutenFree = values['checkbox-group'].includes('gluten free');
+    const vegetarian = values['checkbox-group'].includes('vegetarian');
+    const vegan = values['checkbox-group'].includes('vegan');
+
+    const data = {
+      username: values.username,
+      password: values.password,
+      name: values.name,
+      email: values.email,
+      glutenFree,
+      vegetarian,
+      vegan,
+    };
+
+    const userCheck = this;
+
+    // fetch request to create a user
+    fetch('/api/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((resData) => {
+        console.log(resData);
+        if (resData.err === 'Username already exists') {
+          // change usernameCheck --> display error
+          setUsernameCheck(true);
+        } else if (resData.success) {
+          // change redirect in local state to true
+          props.setUsername(resData.username);
+          setRedirect(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+
+  //Redirect upon successful sign up
+  if (redirect) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <div className="site-layout-content">
@@ -67,8 +128,10 @@ const SignUp = () => {
             },
           ]}
         >
-          <Input />
+          <Input onChange={() => setUsernameCheck(false)} />
         </Form.Item>
+
+        {usernameCheck && <p style={{ color: 'red' }}> Username already exists</p>}
 
         <Form.Item
           name="email"
@@ -178,4 +241,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

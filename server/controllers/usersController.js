@@ -21,6 +21,19 @@ usersController.checkUsername = (req, res, next) => {
   });
 };
 
+usersController.checkLogin = (req, res, next) => {
+  // Check if username exists
+  // if so, bcrypt password & compare?
+  // If successful, move on to create session
+  next();
+};
+
+usersController.logout = (req, res, next) => {
+  // Get session number
+  // clear session
+  next();
+};
+// Check to make sure passwords match, then encrypt
 usersController.checkPassword = (req, res, next) => {
   const { password1, password2 } = req.body;
 
@@ -36,6 +49,7 @@ usersController.checkPassword = (req, res, next) => {
   });
 };
 
+// If username and password look good, add new user to database
 usersController.addUser = (req, res, next) => {
   const text = `INSERT INTO ubiquitous_spoon.users (username, password, name, email, vegan, vegetarian, gluten_free)
   VALUES('${req.body.username}', '${res.locals.password}', '${req.body.name}', '${req.body.email}', '${req.body.vegan}', '${req.body.vegetarian}', '${req.body.glutenFree}');`;
@@ -47,6 +61,7 @@ usersController.addUser = (req, res, next) => {
   });
 };
 
+// Insert new session into session table in db and set cookie
 usersController.createSession = (req, res, next) => {
   const ssid = uuidv4();
   const text = `INSERT INTO ubiquitous_spoon.sessions (id, created_at) VALUES('${ssid}', current_timestamp);`;
@@ -57,6 +72,14 @@ usersController.createSession = (req, res, next) => {
     res.cookie('ssid', ssid, { httpOnly: true });
     next();
   });
+};
+
+usersController.getUserInfo = (req, res, next) => {
+  next();
+};
+
+usersController.updateUserInfo = (req, res, next) => {
+  next();
 };
 
 module.exports = usersController;
