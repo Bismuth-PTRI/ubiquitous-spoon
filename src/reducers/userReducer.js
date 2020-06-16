@@ -12,13 +12,14 @@
 import * as types from '../constants/actionTypes';
 
 const initialState = {
-  user: null,
+  username: null,
 };
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.SET_USER:
-      return { ...state };
+      const username = action.payload;
+      return { ...state, username };
 
     case types.CLEAR_USER:
       return { ...state };
