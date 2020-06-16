@@ -3,7 +3,14 @@ import '../../node_modules/antd/dist/antd.css';
 import '../App.css';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+
+// imported components
 import Nav from './Nav.jsx';
+import SignUp from './SignUp';
+import Profile from './Profile';
+import Homepage from './Homepage';
+import Login from './Login';
+import Favorites from './Favorites';
 
 const { Header, Content, Footer } = Layout;
 
@@ -12,25 +19,44 @@ const App = () => {
   console.log('hi!!');
   return (
     <Router>
-      <Layout>
+      <Layout className="layout">
         <Header>
           <Nav />
         </Header>
+
         <Switch>
           <Route exact path="/">
-            <Content>Home</Content>
+            <Content>
+              <Homepage />
+            </Content>
           </Route>
+
           <Route path="/login">
-            <Content>login</Content>
+            <Content>
+              <Login />
+            </Content>
           </Route>
+
+          <Route path="/signup">
+            <Content>
+              <SignUp />
+            </Content>
+          </Route>
+
           <Route path="/profile">
-            <Content>profile</Content>
+            <Content>
+              <Profile />
+            </Content>
           </Route>
+
           <Route path="/favorites">
-            <Content>favorites</Content>
+            <Content>
+              <Favorites />
+            </Content>
           </Route>
         </Switch>
-        <Footer>Footer</Footer>
+
+        <Footer style={{ textAlign: 'center' }}>Footer</Footer>
       </Layout>
     </Router>
   );
