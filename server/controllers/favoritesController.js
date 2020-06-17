@@ -11,7 +11,7 @@ favoritesController.getUserId = async (req, res, next) => {
     res.locals.userId = userId;
     next();
   } catch (err) {
-    next({ log: `getUserId controller error: ${err.message}`, message: { err: 'An error with getting id of user' } });
+    next({ log: `getUserId controller error: ${err.message}`, message: { err: 'This user does not exist' } });
   }
 };
 
@@ -29,7 +29,7 @@ favoritesController.addFavorite = async (req, res, next) => {
     await pool.query(addFavoriteQuery, addFavoriteValues);
     next();
   } catch (err) {
-    next({ log: `addFavorite controller error: ${err.message}`, message: { err: 'An error with adding favorite occurered' } });
+    next({ log: `addFavorite controller error: ${err.message}`, message: { err: 'An error with adding this recipe to favorites occurred' } });
   }
 };
 
