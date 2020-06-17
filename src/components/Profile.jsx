@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Form, Input, Tooltip, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Alert } from 'antd';
 import { connect } from 'react-redux';
@@ -41,40 +41,127 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  setFoodPrefs: actions.setFoodPrefs,
-  setEmail: actions.setEmail,
-  setFullName: actions.setFullName,
-  setPassword: actions.setPassword,
+  setUserPrefs: actions.setUserPrefs,
 };
 
-const Profile = () => {
+const Profile = (props) => {
+  const [checkOptions] = useState(['Gluten Free', 'Vegan', 'Vegetarian']);
+  const [checkList, setCheckList] = useState([]);
+  const [form] = Form.useForm();
+
+  // handles changes to checkboxes
+  const checkChange = (checkedList) => {
+    setCheckList(checkedList);
+  };
+
+  // when user presses update profile
+  const onFinish = (values) => {
+    console.log('values is ->', values);
+  };
+
   // pull in the user's data on mount or update
   useEffect(() => {
+    console.log('use effect');
     const data = { username: props.user };
 
-    fetch('/api/user/info', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((resData) => {
-        // populate user data into state
-        const foodPrefs = [resData.glutenFree, resData.vegan, resData.vegetarian];
+    // fetch('/api/user/info', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(data),
+    // })
+    //   .then((res) => res.json())
+    //   .then((resData) => {
+    //     // populate user data into state
+    //     const foodPrefs = {
+    //       glutenFree: resData.glutenFree,
+    //       vegan: resData.vegan,
+    //       vegetarian: resData.vegetarian,
+    //     };
 
-        props.setEmail(resData.email);
-        props.setFullName(resData.name);
-        props.setPassword(resData.password);
-        props.setFoodPrefs(foodPrefs);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  });
+    //     const prefs = {
+    //       email: resData.email,
+    //       name: resData.name,
+    //       foodPrefs: foodPrefs,
+    //     };
 
-  return <div className="site-layout-content">Profile</div>;
+    //     props.setUserPrefs(prefs);
+
+    //     // populate the form too
+    //     form.setFieldsValue({
+    //       email: resData.email,
+    //       fullName: resData.name,
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    form.setFieldsValue({
+      email: 'test@test.com',
+      fullName: 'John Smith',
+    });
+  }, []);
+
+  return (
+    <div className="site-layout-content">
+      <Form
+        {...formItemLayout}
+        form={form}
+        name="preferences"
+        onFinish={onFinish}
+        // scrollToFirstError
+      >
+        <Form.Item
+          name="email"
+          label="E-mail"
+          rules={[
+            {
+              type: 'email',
+              message: 'The input is not valid E-mail!',
+            },
+            {
+              required: true,
+              message: 'Please input your E-mail!',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="fullName"
+          label={
+            <span>
+              Full Name&nbsp;
+              <Tooltip title="What is your full name?">
+                <QuestionCircleOutlined />
+              </Tooltip>
+            </span>
+          }
+          rules={[
+            {
+              required: true,
+              message: 'Please input your full name!',
+              whitespace: true,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item name="checkbox-group" label="Food Preferences">
+          <Checkbox.Group options={checkOptions} value={checkList} onChange={checkChange}></Checkbox.Group>
+        </Form.Item>
+
+        <Form.Item {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">
+            Update Profile
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
+  );
 };
 
-export default Profile;
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);
