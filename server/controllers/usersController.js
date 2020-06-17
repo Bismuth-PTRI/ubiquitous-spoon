@@ -41,15 +41,17 @@ usersController.checkLogin = (req, res, next) => {
 
     // Compare bcrypted password to password user entered
     bcrypt.compare(password, bcryptPassword, function (err, isMatch) {
-      if (err) {
-        return next(err);
+      console.log('password matched ->', isMatch);
+      if (!isMatch) {
         // If they don't match, return error "Wrong Password"
-      } else if (!isMatch) {
         return next({ log: 'checkLogin', message: { err: 'Wrong password' } });
+      } else if (err) {
+        return next(err);
+      } else {
+        next();
       }
     });
   });
-  next();
 };
 
 usersController.logout = (req, res, next) => {
