@@ -43,7 +43,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-const Login = () => {
+const Login = (props) => {
   const [redirect, setRedirect] = useState('');
   const [notice, setNotice] = useState('');
   const [form] = Form.useForm();
@@ -66,7 +66,7 @@ const Login = () => {
       .then((resData) => {
         if (!resData.success) {
           // display the error as a notice in state
-          setNotice(resData.message);
+          setNotice(resData.err);
           form.setFieldsValue({ username: '', password: '' });
         } else if (resData.success) {
           // change redirect in local state to true
