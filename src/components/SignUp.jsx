@@ -213,17 +213,17 @@ const SignUp = (props) => {
         <Form.Item name="checkbox-group" label="Food Preferences">
           <Checkbox.Group>
             <Row>
-              <Col span={12}>
+              <Col span={24}>
                 <Checkbox value="gluten free" style={{ lineHeight: '32px' }}>
                   Gluten Free
                 </Checkbox>
               </Col>
-              <Col span={12}>
+              <Col span={24}>
                 <Checkbox value="vegan" style={{ lineHeight: '32px' }}>
                   Vegan
                 </Checkbox>
               </Col>
-              <Col span={12}>
+              <Col span={24}>
                 <Checkbox value="vegetarian" style={{ lineHeight: '32px' }}>
                   Vegetarian
                 </Checkbox>
