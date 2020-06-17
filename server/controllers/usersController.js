@@ -22,9 +22,33 @@ usersController.checkUsername = (req, res, next) => {
 };
 
 usersController.checkLogin = (req, res, next) => {
-  // Check if username exists
-  // if so, bcrypt password & compare?
-  // If successful, move on to create session
+  const user = req.body.username.toLowerCase();
+  const password = req.body.password;
+  let bcryptPassword;
+
+  // Query database using user input (username & password)
+  const text = `SELECT * FROM ubiquitous_spoon.users WHERE username = '${user}'`;
+  pool.query(text, (err, response) => {
+    if (err) {
+      return next(err);
+    }
+    // If no response, it means user doesn't have acct yet
+    if (response.rows.length === 0) {
+      return next({ log: 'checkLogin', message: { err: 'Username not found' } });
+    }
+    // If user does exist, grab bcrypted password from DB
+    bcryptPassword = response.rows[0].password;
+
+    // Compare bcrypted password to password user entered
+    bcrypt.compare(password, bcryptPassword, function (err, isMatch) {
+      if (err) {
+        return next(err);
+        // If they don't match, return error "Wrong Password"
+      } else if (!isMatch) {
+        return next({ log: 'checkLogin', message: { err: 'Wrong password' } });
+      }
+    });
+  });
   next();
 };
 
