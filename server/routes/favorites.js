@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const favoritesController = require('../controllers/favoritesController');
 
@@ -8,7 +9,7 @@ router.get('/', favoritesController.getFavorites, (req, res) => {
 });
 
 // Add to favorites
-router.post('/', favoritesController.addFavorite, (req, res) => {
+router.post('/', favoritesController.getUserId, favoritesController.addFavorite, (req, res) => {
   res.status(200).json({ success: true });
 });
 
