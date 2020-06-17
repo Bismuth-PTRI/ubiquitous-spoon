@@ -7,10 +7,13 @@ Ubiquitous Spoon is a full-stack app built using the PERN stack
 ## Getting Started
 
 To get a copy of this project up and running locally for development and testing purposes, fork the repo, then:
-git clone https://github.com/[YOUR USERNAME]/ubiquitous-spoon.git  
- cd ubiquitous-spoon
+
+```
+git clone https://github.com/YOUR_USERNAME/ubiquitous-spoon.git 
+cd ubiquitous-spoon
 npm install  
- npm run dev
+npm run dev
+```
 
 ## Production
 
