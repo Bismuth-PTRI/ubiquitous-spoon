@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { Form, Input, Tooltip, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
+import { Form, Input, Tooltip, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Alert } from 'antd';
 import { connect } from 'react-redux';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import * as actions from '../actions/actions';
@@ -40,28 +40,28 @@ const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => ({
   setUsername: (username) => {
-    console.log('in setUsername in MapDispatchToProps');
+    // console.log('in setUsername in MapDispatchToProps');
     dispatch(actions.setUser(username));
   },
 });
 
 const SignUp = (props) => {
   const [redirect, setRedirect] = useState(false);
-  const [usernameCheck, setUsernameCheck] = useState(false);
+  const [notice, setNotice] = useState('');
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
-    console.log('Received values of form: ', values);
+    // console.log('Received values of form: ', values);
 
     //["gluten free", "vegetarian", "vegan"]
-
-    const glutenFree = values['checkbox-group'].includes('gluten free');
-    const vegetarian = values['checkbox-group'].includes('vegetarian');
-    const vegan = values['checkbox-group'].includes('vegan');
+    const glutenFree = values['checkbox-group'] ? values['checkbox-group'].includes('gluten free') : false;
+    const vegetarian = values['checkbox-group'] ? values['checkbox-group'].includes('vegetarian') : false;
+    const vegan = values['checkbox-group'] ? values['checkbox-group'].includes('vegan') : false;
 
     const data = {
       username: values.username,
-      password: values.password,
+      password1: values.password,
+      password2: values.confirm,
       name: values.name,
       email: values.email,
       glutenFree,
@@ -81,10 +81,10 @@ const SignUp = (props) => {
     })
       .then((res) => res.json())
       .then((resData) => {
-        console.log(resData);
         if (resData.err === 'Username already exists') {
-          // change usernameCheck --> display error
-          setUsernameCheck(true);
+          // display the error as a notice in state
+          setNotice(resData.err);
+          form.setFieldsValue({ username: '' });
         } else if (resData.success) {
           // change redirect in local state to true
           props.setUsername(resData.username);
@@ -110,6 +110,9 @@ const SignUp = (props) => {
         onFinish={onFinish}
         // scrollToFirstError
       >
+        {/* conditionally render the alert if an error notice has occured */}
+        {notice && <Alert style={{ marginBottom: 24 }} message={notice} type="error" showIcon closable />}
+
         <Form.Item
           name="username"
           label={
@@ -128,10 +131,8 @@ const SignUp = (props) => {
             },
           ]}
         >
-          <Input onChange={() => setUsernameCheck(false)} />
+          <Input onChange={() => setNotice('')} />
         </Form.Item>
-
-        {usernameCheck && <p style={{ color: 'red' }}> Username already exists</p>}
 
         <Form.Item
           name="email"
