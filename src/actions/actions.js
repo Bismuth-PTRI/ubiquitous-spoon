@@ -19,5 +19,10 @@ export const setUser = (user) => ({
 
 export const clearUser = () => ({
   type: types.SET_USER,
-  // payload: user,
+  payload: user,
+});
+
+export const setUserPrefs = (userPrefs) => ({
+  type: types.SET_EMAIL,
+  payload: email,
 });
