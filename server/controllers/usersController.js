@@ -55,9 +55,18 @@ usersController.checkLogin = (req, res, next) => {
 };
 
 usersController.logout = (req, res, next) => {
-  // Get session number
-  // clear session
-  next();
+  // Get the session ID cookie from the browser
+  const sessionId = req.cookies.ssid;
+  // Clear session cookie from browser
+  res.clearCookie('ssid');
+  // Delete session from session table in DB
+  const text = `DELETE FROM ubiquitous_spoon.sessions WHERE id = '${sessionId}'`;
+  pool.query(text, (err, response) => {
+    if (err) {
+      return next(err);
+    }
+    next();
+  });
 };
 // Check to make sure passwords match, then encrypt
 usersController.checkPassword = (req, res, next) => {
