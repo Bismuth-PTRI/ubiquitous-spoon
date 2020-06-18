@@ -39,7 +39,7 @@ const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => ({
   setUsername: (username) => {
-    dispatch(actions.setUser(username));
+    dispatch(actions.setUsername(username));
   },
 });
 
@@ -70,6 +70,7 @@ const Login = (props) => {
           form.setFieldsValue({ username: '', password: '' });
         } else if (resData.success) {
           // change redirect in local state to true
+          console.log('resData.username', resData.username);
           props.setUsername(resData.username);
           setRedirect('/');
         }

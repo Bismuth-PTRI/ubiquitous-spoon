@@ -48,6 +48,7 @@ usersController.checkLogin = (req, res, next) => {
       } else if (err) {
         return next(err);
       } else {
+        res.locals.username = req.body.username;
         next();
       }
     });
