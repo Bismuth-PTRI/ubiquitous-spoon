@@ -22,7 +22,7 @@ const initialState = {
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
-    case types.SET_USER:
+    case types.SET_USERNAME:
       const username = action.payload;
       return { ...state, username };
 
