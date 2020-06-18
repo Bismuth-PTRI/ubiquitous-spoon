@@ -5,12 +5,14 @@ const morgan = require('morgan');
 // eslint-disable-next-line no-unused-vars
 const colors = require('colors');
 const express = require('express');
+const cookieParser = require('cookie-parser');
+
+// Importing routes
 const signup = require('./routes/signup');
 const login = require('./routes/login');
 const favorites = require('./routes/favorites');
 const logout = require('./routes/logout');
 const userInfo = require('./routes/userinfo');
-const cookieParser = require('cookie-parser');
 
 const app = express();
 
