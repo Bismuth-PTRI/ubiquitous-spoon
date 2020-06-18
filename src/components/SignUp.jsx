@@ -40,8 +40,7 @@ const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => ({
   setUsername: (username) => {
-    // console.log('in setUsername in MapDispatchToProps');
-    dispatch(actions.setUser(username));
+    dispatch(actions.setUsername(username));
   },
 });
 
