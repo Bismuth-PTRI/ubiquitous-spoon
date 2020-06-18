@@ -110,7 +110,18 @@ usersController.createSession = (req, res, next) => {
 };
 
 usersController.getUserInfo = (req, res, next) => {
-  next();
+  // get username from request body
+  const username = req.body.username;
+
+  // get fields (except password) from database for that user
+  const text = `SELECT username, name, email, vegan, vegetarian, gluten_free FROM ubiquitous_spoon.users WHERE username = '${username}'`;
+  pool.query(text, (err, response) => {
+    if (err) {
+      return next(err);
+    }
+    res.locals.userInfo = response.rows[0];
+    next();
+  });
 };
 
 usersController.updateUserInfo = (req, res, next) => {
