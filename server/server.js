@@ -10,8 +10,11 @@ const login = require('./routes/login');
 const favorites = require('./routes/favorites');
 const logout = require('./routes/logout');
 const userInfo = require('./routes/userinfo');
+const cookieParser = require('cookie-parser');
 
 const app = express();
+
+app.use(cookieParser());
 
 // Body Parser
 app.use(express.json());
