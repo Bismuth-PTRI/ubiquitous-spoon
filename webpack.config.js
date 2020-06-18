@@ -59,7 +59,10 @@ module.exports = {
             // },
           },
         ],
-        // ...other rules
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: ['file-loader'],
       },
     ],
   },
