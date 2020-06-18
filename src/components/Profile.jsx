@@ -37,7 +37,7 @@ const tailFormItemLayout = {
 };
 
 const mapStateToProps = (state) => ({
-  user: state.user.user,
+  user: state.user.username,
 });
 
 const mapDispatchToProps = {
@@ -47,60 +47,101 @@ const mapDispatchToProps = {
 const Profile = (props) => {
   const [checkOptions] = useState(['Gluten Free', 'Vegan', 'Vegetarian']);
   const [checkList, setCheckList] = useState([]);
+  const [notice, setNotice] = useState('');
+  const [successNotice, setSuccessNotice] = useState('');
   const [form] = Form.useForm();
 
   // handles changes to checkboxes
   const checkChange = (checkedList) => {
     setCheckList(checkedList);
+    onChange();
+  };
+
+  // on change clears out notices
+  const onChange = () => {
+    setNotice('');
+    setSuccessNotice('');
   };
 
   // when user presses update profile
   const onFinish = (values) => {
-    console.log('values is ->', values);
+    //["gluten free", "vegetarian", "vegan"]
+    const glutenFree = values['checkbox-group'] ? values['checkbox-group'].includes('Gluten Free') : false;
+    const vegetarian = values['checkbox-group'] ? values['checkbox-group'].includes('Vegetarian') : false;
+    const vegan = values['checkbox-group'] ? values['checkbox-group'].includes('Vegan') : false;
+
+    const data = {
+      username: props.username,
+      name: values.fullName,
+      email: values.email,
+      glutenFree,
+      vegan,
+      vegetarian,
+    };
+
+    fetch('/api/user/info', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.err !== '') {
+          setNotice(resData.err);
+        } else {
+          setSuccessNotice('Your profile has been updated!');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // pull in the user's data on mount or update
   useEffect(() => {
-    console.log('use effect');
     const data = { username: props.user };
 
-    // fetch('/api/user/info', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(data),
-    // })
-    //   .then((res) => res.json())
-    //   .then((resData) => {
-    //     // populate user data into state
-    //     const foodPrefs = {
-    //       glutenFree: resData.glutenFree,
-    //       vegan: resData.vegan,
-    //       vegetarian: resData.vegetarian,
-    //     };
+    fetch('/api/user/info', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((resData) => {
+        // populate user data into state
+        const foodPrefs = {
+          glutenFree: resData.glutenFree,
+          vegan: resData.vegan,
+          vegetarian: resData.vegetarian,
+        };
 
-    //     const prefs = {
-    //       email: resData.email,
-    //       name: resData.name,
-    //       foodPrefs: foodPrefs,
-    //     };
+        const prefs = {
+          email: resData.email,
+          name: resData.name,
+          foodPrefs: foodPrefs,
+        };
 
-    //     props.setUserPrefs(prefs);
+        props.setUserPrefs(prefs);
 
-    //     // populate the form too
-    //     form.setFieldsValue({
-    //       email: resData.email,
-    //       fullName: resData.name,
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-    form.setFieldsValue({
-      email: 'test@test.com',
-      fullName: 'John Smith',
-    });
+        const defaultChecks = [];
+        if (foodPrefs.glutenFree) defaultChecks.push('Gluten Free');
+        if (foodPrefs.vegan) defaultChecks.push('Vegan');
+        if (foodPrefs.vegetarian) defaultChecks.push('Vegetarian');
+
+        // populate the form too
+        form.setFieldsValue({
+          email: resData.email,
+          fullName: resData.name,
+          ['checkbox-group']: defaultChecks,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   return (
@@ -112,6 +153,10 @@ const Profile = (props) => {
         onFinish={onFinish}
         // scrollToFirstError
       >
+        {/* conditionally render the alert if an error notice has occured */}
+        {notice && <Alert style={{ marginBottom: 24 }} message={notice} type="error" showIcon closable />}
+        {successNotice && <Alert style={{ marginBottom: 24 }} message={notice} type="success" showIcon closable />}
+
         <Form.Item
           name="email"
           label="E-mail"
@@ -126,7 +171,7 @@ const Profile = (props) => {
             },
           ]}
         >
-          <Input />
+          <Input onChange={onChange} />
         </Form.Item>
 
         <Form.Item
@@ -147,11 +192,11 @@ const Profile = (props) => {
             },
           ]}
         >
-          <Input />
+          <Input onChange={onChange} />
         </Form.Item>
 
         <Form.Item name="checkbox-group" label="Food Preferences">
-          <Checkbox.Group options={checkOptions} value={checkList} onChange={checkChange}></Checkbox.Group>
+          <Checkbox.Group options={checkOptions} defaultValue={checkList} onChange={checkChange}></Checkbox.Group>
         </Form.Item>
 
         <Form.Item {...tailFormItemLayout}>
