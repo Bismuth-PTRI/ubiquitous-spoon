@@ -15,14 +15,17 @@ favoritesController.getUserId = async (req, res, next) => {
   }
 };
 
-// TODO: add try/catch
 favoritesController.getFavorites = async (req, res, next) => {
   const { userId } = res.locals;
-  const queryString = `SELECT title, summary, source_url, image FROM ubiquitous_spoon.favorites f 
-  JOIN ubiquitous_spoon.recipes r ON f.recipe_id = r.id WHERE user_id='${userId}'`;
-  const { rows } = await pool.query(queryString);
-  res.locals.favorites = rows;
-  next();
+  try {
+    const queryString = `SELECT title, summary, source_url, image FROM ubiquitous_spoon.favorites f 
+    JOIN ubiquitous_spoon.recipes r ON f.recipe_id = r.id WHERE user_id='${userId}'`;
+    const { rows } = await pool.query(queryString);
+    res.locals.favorites = rows;
+    next();
+  } catch (err) {
+    next({ log: `getFavorites controller error: ${err.message}`, message: { err: 'An error with getting favorites has occurred' } });
+  }
 };
 
 favoritesController.addFavorite = async (req, res, next) => {
