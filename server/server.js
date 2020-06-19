@@ -1,10 +1,14 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-console */
-const path = require('path');
 const morgan = require('morgan');
 // eslint-disable-next-line no-unused-vars
 const colors = require('colors');
 const express = require('express');
+const dotenv = require('dotenv');
+
+// Load environment variables
+dotenv.config();
+
 const cookieParser = require('cookie-parser');
 
 // Importing routes
