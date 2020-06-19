@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
-import { Form, Input, Tooltip, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Alert } from 'antd';
+import { Card, Form, Input, Tooltip, Checkbox, Button, Divider, Alert } from 'antd';
 import { connect } from 'react-redux';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import * as actions from '../actions/actions';
@@ -146,65 +146,68 @@ const Profile = (props) => {
 
   return (
     <div className="site-layout-content">
-      <Form
-        {...formItemLayout}
-        form={form}
-        name="preferences"
-        onFinish={onFinish}
-        // scrollToFirstError
-      >
-        {/* conditionally render the alert if an error notice has occured */}
-        {notice && <Alert style={{ marginBottom: 24 }} message={notice} type="error" showIcon closable />}
-        {successNotice && <Alert style={{ marginBottom: 24 }} message={successNotice} type="success" showIcon closable />}
-
-        <Form.Item
-          name="email"
-          label="E-mail"
-          rules={[
-            {
-              type: 'email',
-              message: 'The input is not valid E-mail!',
-            },
-            {
-              required: true,
-              message: 'Please input your E-mail!',
-            },
-          ]}
+      <Card style={{ width: '66%', opacity: 0.9 }}>
+        <Divider orientation="left">{`${props.username}'s profile`}</Divider>
+        <Form
+          {...formItemLayout}
+          form={form}
+          name="preferences"
+          onFinish={onFinish}
+          // scrollToFirstError
         >
-          <Input onChange={onChange} />
-        </Form.Item>
+          {/* conditionally render the alert if an error notice has occured */}
+          {notice && <Alert style={{ marginBottom: 24 }} message={notice} type="error" showIcon closable />}
+          {successNotice && <Alert style={{ marginBottom: 24 }} message={successNotice} type="success" showIcon closable />}
 
-        <Form.Item
-          name="fullName"
-          label={
-            <span>
-              Full Name&nbsp;
-              <Tooltip title="What is your full name?">
-                <QuestionCircleOutlined />
-              </Tooltip>
-            </span>
-          }
-          rules={[
-            {
-              required: true,
-              message: 'Please input your full name!',
-              whitespace: true,
-            },
-          ]}
-        >
-          <Input onChange={onChange} />
-        </Form.Item>
+          <Form.Item
+            name="email"
+            label="E-mail"
+            rules={[
+              {
+                type: 'email',
+                message: 'The input is not valid E-mail!',
+              },
+              {
+                required: true,
+                message: 'Please input your E-mail!',
+              },
+            ]}
+          >
+            <Input onChange={onChange} />
+          </Form.Item>
 
-        <Form.Item name="checkbox-group" label="Food Preferences">
-          <Checkbox.Group options={checkOptions} onChange={checkChange}></Checkbox.Group>
-        </Form.Item>
+          <Form.Item
+            name="fullName"
+            label={
+              <span>
+                Full Name&nbsp;
+                <Tooltip title="What is your full name?">
+                  <QuestionCircleOutlined />
+                </Tooltip>
+              </span>
+            }
+            rules={[
+              {
+                required: true,
+                message: 'Please input your full name!',
+                whitespace: true,
+              },
+            ]}
+          >
+            <Input onChange={onChange} />
+          </Form.Item>
 
-        <Form.Item {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">
-            Update Profile
-          </Button>
-        </Form.Item>
-      </Form>
+          <Form.Item name="checkbox-group" label="Food Preferences">
+            <Checkbox.Group options={checkOptions} onChange={checkChange}></Checkbox.Group>
+          </Form.Item>
+
+          <Form.Item {...tailFormItemLayout}>
+            <Button type="primary" htmlType="submit">
+              Update Profile
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
     </div>
   );
 };
