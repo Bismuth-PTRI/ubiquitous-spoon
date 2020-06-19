@@ -23,5 +23,5 @@ export const clearUser = () => ({
 
 export const setUserPrefs = (userPrefs) => ({
   type: types.SET_USERPREFS,
-  payload: email,
+  payload: userPrefs,
 });

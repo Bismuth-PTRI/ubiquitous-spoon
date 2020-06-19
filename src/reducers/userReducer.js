@@ -28,7 +28,7 @@ const userReducer = (state = initialState, action) => {
 
     case types.SET_USERPREFS:
       const email = action.payload.email;
-      const fullName = action.payload.fullName;
+      const fullName = action.payload.name;
       const glutenFree = action.payload.foodPrefs.glutenFree;
       const vegan = action.payload.foodPrefs.vegan;
       const vegetarian = action.payload.foodPrefs.vegetarian;

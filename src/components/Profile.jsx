@@ -37,7 +37,7 @@ const tailFormItemLayout = {
 };
 
 const mapStateToProps = (state) => ({
-  user: state.user.username,
+  username: state.user.username,
 });
 
 const mapDispatchToProps = {
@@ -88,7 +88,7 @@ const Profile = (props) => {
     })
       .then((res) => res.json())
       .then((resData) => {
-        if (resData.err !== '') {
+        if (resData.err !== undefined) {
           setNotice(resData.err);
         } else {
           setSuccessNotice('Your profile has been updated!');
@@ -101,7 +101,7 @@ const Profile = (props) => {
 
   // pull in the user's data on mount or update
   useEffect(() => {
-    const data = { username: props.user };
+    const data = { username: props.username };
 
     fetch('/api/user/info', {
       method: 'POST',
@@ -114,14 +114,14 @@ const Profile = (props) => {
       .then((resData) => {
         // populate user data into state
         const foodPrefs = {
-          glutenFree: resData.glutenFree,
-          vegan: resData.vegan,
-          vegetarian: resData.vegetarian,
+          glutenFree: resData.userInfo.gluten_free,
+          vegan: resData.userInfo.vegan,
+          vegetarian: resData.userInfo.vegetarian,
         };
 
         const prefs = {
-          email: resData.email,
-          name: resData.name,
+          email: resData.userInfo.email,
+          name: resData.userInfo.name,
           foodPrefs: foodPrefs,
         };
 
@@ -134,8 +134,8 @@ const Profile = (props) => {
 
         // populate the form too
         form.setFieldsValue({
-          email: resData.email,
-          fullName: resData.name,
+          email: resData.userInfo.email,
+          fullName: resData.userInfo.name,
           ['checkbox-group']: defaultChecks,
         });
       })
@@ -155,7 +155,7 @@ const Profile = (props) => {
       >
         {/* conditionally render the alert if an error notice has occured */}
         {notice && <Alert style={{ marginBottom: 24 }} message={notice} type="error" showIcon closable />}
-        {successNotice && <Alert style={{ marginBottom: 24 }} message={notice} type="success" showIcon closable />}
+        {successNotice && <Alert style={{ marginBottom: 24 }} message={successNotice} type="success" showIcon closable />}
 
         <Form.Item
           name="email"
@@ -196,7 +196,7 @@ const Profile = (props) => {
         </Form.Item>
 
         <Form.Item name="checkbox-group" label="Food Preferences">
-          <Checkbox.Group options={checkOptions} defaultValue={checkList} onChange={checkChange}></Checkbox.Group>
+          <Checkbox.Group options={checkOptions} onChange={checkChange}></Checkbox.Group>
         </Form.Item>
 
         <Form.Item {...tailFormItemLayout}>
