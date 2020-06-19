@@ -31,6 +31,13 @@ body {
   justify-content: space-around;
 }
 
+.Favorites_Container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
 .ant-layout-footer {
   height: 50px;
   padding: 15px 0px 10px;
