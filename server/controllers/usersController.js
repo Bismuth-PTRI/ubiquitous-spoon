@@ -126,7 +126,22 @@ usersController.getUserInfo = (req, res, next) => {
 };
 
 usersController.updateUserInfo = (req, res, next) => {
-  next();
+  // Get info from request
+  const username = req.body.username,
+    name = req.body.name,
+    email = req.body.email,
+    glutenFree = req.body.glutenFree,
+    vegan = req.body.vegan,
+    vegetarian = req.body.vegetarian;
+
+  // Update info in database
+  const text = `UPDATE ubiquitous_spoon.users SET name = '${name}', email = '${email}', gluten_free = '${glutenFree}', vegan = '${vegan}', vegetarian = '${vegetarian}' WHERE username = '${username}'`;
+  pool.query(text, (err, response) => {
+    if (err) {
+      return next(err);
+    }
+    next();
+  });
 };
 
 module.exports = usersController;
