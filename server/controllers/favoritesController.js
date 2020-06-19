@@ -22,7 +22,7 @@ favoritesController.getUserId = async (req, res, next) => {
 favoritesController.getFavorites = async (req, res, next) => {
   const { userId } = res.locals;
   try {
-    const queryString = `SELECT title, summary, source_url, image FROM ubiquitous_spoon.favorites f 
+    const queryString = `SELECT r.id, title, summary, source_url, image FROM ubiquitous_spoon.favorites f 
     JOIN ubiquitous_spoon.recipes r ON f.recipe_id = r.id WHERE user_id='${userId}'`;
     const { rows } = await pool.query(queryString);
     res.locals.favorites = rows;
