@@ -4,8 +4,8 @@ const router = express.Router();
 const favoritesController = require('../controllers/favoritesController');
 
 // Look at favorites
-router.get('/', favoritesController.getFavorites, (req, res) => {
-  res.status(200).json({ success: true });
+router.get('/', favoritesController.getUserId, favoritesController.getFavorites, (req, res) => {
+  res.status(200).json({ success: true, favorites: res.locals.favorites });
 });
 
 // Add to favorites
