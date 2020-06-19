@@ -13,7 +13,6 @@ usersController.checkUsername = (req, res, next) => {
       return next(err);
     }
     if (response.rows.length === 0) {
-      res.locals.username = user;
     } else {
       return next({ log: 'checkUsername', message: { err: 'Username already exists' } });
     }
@@ -36,6 +35,10 @@ usersController.checkLogin = (req, res, next) => {
     if (response.rows.length === 0) {
       return next({ log: 'checkLogin', message: { err: 'Username not found' } });
     }
+    // If user exists, set res.locals for food preferences so they can be used in searches
+    res.locals.vegan = response.rows[0].vegan;
+    res.locals.vegetarian = response.rows[0].vegetarian;
+    res.locals.glutenFree = response.rows[0].gluten_free;
     // If user does exist, grab bcrypted password from DB
     bcryptPassword = response.rows[0].password;
 
@@ -49,6 +52,7 @@ usersController.checkLogin = (req, res, next) => {
         return next(err);
       } else {
         res.locals.username = req.body.username;
+        console.log('gluten free? ', res.locals.glutenFree);
         next();
       }
     });
@@ -111,11 +115,37 @@ usersController.createSession = (req, res, next) => {
 };
 
 usersController.getUserInfo = (req, res, next) => {
-  next();
+  // get username from request body
+  const username = req.body.username;
+
+  // get fields (except password) from database for that user
+  const text = `SELECT username, name, email, vegan, vegetarian, gluten_free FROM ubiquitous_spoon.users WHERE username = '${username}'`;
+  pool.query(text, (err, response) => {
+    if (err) {
+      return next(err);
+    }
+    res.locals.userInfo = response.rows[0];
+    next();
+  });
 };
 
 usersController.updateUserInfo = (req, res, next) => {
-  next();
+  // Get info from request
+  const username = req.body.username,
+    name = req.body.name,
+    email = req.body.email,
+    glutenFree = req.body.glutenFree,
+    vegan = req.body.vegan,
+    vegetarian = req.body.vegetarian;
+
+  // Update info in database
+  const text = `UPDATE ubiquitous_spoon.users SET name = '${name}', email = '${email}', gluten_free = '${glutenFree}', vegan = '${vegan}', vegetarian = '${vegetarian}' WHERE username = '${username}'`;
+  pool.query(text, (err, response) => {
+    if (err) {
+      return next(err);
+    }
+    next();
+  });
 };
 
 module.exports = usersController;
