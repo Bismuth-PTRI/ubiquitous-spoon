@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Card, Switch, Radio, Avatar, Space, Divider } from 'antd';
-import { MinusCircleOutlined, PlusOutlined, SecurityScanTwoTone, HeartTwoTone, FullscreenOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Card, Switch, Radio, Avatar, Space, Divider, Modal } from 'antd';
+import { MinusCircleOutlined, PlusOutlined, SecurityScanTwoTone, HeartTwoTone, FullscreenOutlined, ExpandAltOutlined } from '@ant-design/icons';
+
+// Matt Digel's Trail API Key for https://spoonacular.com/food-api/docs#Search-Recipes-by-Ingredients
+const apiKey = '7598ea483f4a4386ab7c47949df3fee4';
 
 const formItemLayout = {
   labelCol: {
@@ -23,291 +26,19 @@ const formItemLayoutWithOutLabel = {
 const { Meta } = Card;
 
 const Homepage = () => {
-  // Hooks
+  // Search Hooks
   const [shopping, setShopping] = useState('Pre Shopping');
   const [recipes, setRecipes] = useState([]);
 
-  // For UI testing
-  // const [recipes, setRecipes] = useState([
-  //   {
-  //     id: 534573,
-  //     title: 'Brown Butter Apple Crumble',
-  //     image: 'https://spoonacular.com/recipeImages/534573-312x231.jpg',
-  //     imageType: 'jpg',
-  //     usedIngredientCount: 1,
-  //     missedIngredientCount: 2,
-  //     missedIngredients: [
-  //       {
-  //         id: 2010,
-  //         amount: 0.5,
-  //         unit: 'tsp',
-  //         unitLong: 'teaspoons',
-  //         unitShort: 'tsp',
-  //         aisle: 'Spices and Seasonings',
-  //         name: 'cinnamon',
-  //         original: '1/2 tsp cinnamon',
-  //         originalString: '1/2 tsp cinnamon',
-  //         originalName: 'cinnamon',
-  //         metaInformation: [],
-  //         meta: [],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/cinnamon.jpg',
-  //       },
-  //       {
-  //         id: 8120,
-  //         amount: 0.5,
-  //         unit: 'cup',
-  //         unitLong: 'cups',
-  //         unitShort: 'cup',
-  //         aisle: 'Cereal',
-  //         name: 'oats',
-  //         original: '1/2 cup uncooked oats (not instant)',
-  //         originalString: '1/2 cup uncooked oats (not instant)',
-  //         originalName: 'uncooked oats (not instant)',
-  //         metaInformation: ['uncooked', '(not instant)'],
-  //         meta: ['uncooked', '(not instant)'],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/rolled-oats.jpg',
-  //       },
-  //     ],
-  //     usedIngredients: [
-  //       {
-  //         id: 9003,
-  //         amount: 4.0,
-  //         unit: '',
-  //         unitLong: '',
-  //         unitShort: '',
-  //         aisle: 'Produce',
-  //         name: 'apples',
-  //         original: '4 apples, peeled, cored and sliced',
-  //         originalString: '4 apples, peeled, cored and sliced',
-  //         originalName: 'apples, peeled, cored and sliced',
-  //         metaInformation: ['cored', 'peeled', 'sliced'],
-  //         meta: ['cored', 'peeled', 'sliced'],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/apple.jpg',
-  //       },
-  //     ],
-  //     unusedIngredients: [],
-  //     likes: 7,
-  //   },
-  //   {
-  //     id: 556470,
-  //     title: 'Apple fritters',
-  //     image: 'https://spoonacular.com/recipeImages/556470-312x231.jpg',
-  //     imageType: 'jpg',
-  //     usedIngredientCount: 0,
-  //     missedIngredientCount: 3,
-  //     missedIngredients: [
-  //       {
-  //         id: 14003,
-  //         amount: 2.0,
-  //         unit: 'tablespoons',
-  //         unitLong: 'tablespoons',
-  //         unitShort: 'Tbsp',
-  //         aisle: 'Alcoholic Beverages',
-  //         name: 'beer',
-  //         original: '2 tablespoons of lager beer',
-  //         originalString: '2 tablespoons of lager beer',
-  //         originalName: 'lager beer',
-  //         metaInformation: [],
-  //         meta: [],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/beer.jpg',
-  //       },
-  //       {
-  //         id: 1123,
-  //         amount: 1.0,
-  //         unit: '',
-  //         unitLong: '',
-  //         unitShort: '',
-  //         aisle: 'Milk, Eggs, Other Dairy',
-  //         name: 'egg',
-  //         original: '1 egg',
-  //         originalString: '1 egg',
-  //         originalName: 'egg',
-  //         metaInformation: [],
-  //         meta: [],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/egg.png',
-  //       },
-  //       {
-  //         id: 1059003,
-  //         amount: 2.0,
-  //         unit: '',
-  //         unitLong: '',
-  //         unitShort: '',
-  //         aisle: 'Produce',
-  //         name: 'red delicious apples',
-  //         original: '2 Golden Delicious apples',
-  //         originalString: '2 Golden Delicious apples',
-  //         originalName: 'Golden Delicious apples',
-  //         metaInformation: [],
-  //         meta: [],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/red-delicious-apples.png',
-  //       },
-  //     ],
-  //     usedIngredients: [],
-  //     unusedIngredients: [
-  //       {
-  //         id: 9003,
-  //         amount: 1.0,
-  //         unit: 'serving',
-  //         unitLong: 'serving',
-  //         unitShort: 'serving',
-  //         aisle: 'Produce',
-  //         name: 'apples',
-  //         original: 'apples',
-  //         originalString: 'apples',
-  //         originalName: 'apples',
-  //         metaInformation: [],
-  //         meta: [],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/apple.jpg',
-  //       },
-  //     ],
-  //     likes: 243,
-  //   },
-  //   {
-  //     id: 534573,
-  //     title: 'Brown Butter Apple Crumble',
-  //     image: 'https://spoonacular.com/recipeImages/534573-312x231.jpg',
-  //     imageType: 'jpg',
-  //     usedIngredientCount: 1,
-  //     missedIngredientCount: 2,
-  //     missedIngredients: [
-  //       {
-  //         id: 2010,
-  //         amount: 0.5,
-  //         unit: 'tsp',
-  //         unitLong: 'teaspoons',
-  //         unitShort: 'tsp',
-  //         aisle: 'Spices and Seasonings',
-  //         name: 'cinnamon',
-  //         original: '1/2 tsp cinnamon',
-  //         originalString: '1/2 tsp cinnamon',
-  //         originalName: 'cinnamon',
-  //         metaInformation: [],
-  //         meta: [],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/cinnamon.jpg',
-  //       },
-  //       {
-  //         id: 8120,
-  //         amount: 0.5,
-  //         unit: 'cup',
-  //         unitLong: 'cups',
-  //         unitShort: 'cup',
-  //         aisle: 'Cereal',
-  //         name: 'oats',
-  //         original: '1/2 cup uncooked oats (not instant)',
-  //         originalString: '1/2 cup uncooked oats (not instant)',
-  //         originalName: 'uncooked oats (not instant)',
-  //         metaInformation: ['uncooked', '(not instant)'],
-  //         meta: ['uncooked', '(not instant)'],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/rolled-oats.jpg',
-  //       },
-  //     ],
-  //     usedIngredients: [
-  //       {
-  //         id: 9003,
-  //         amount: 4.0,
-  //         unit: '',
-  //         unitLong: '',
-  //         unitShort: '',
-  //         aisle: 'Produce',
-  //         name: 'apples',
-  //         original: '4 apples, peeled, cored and sliced',
-  //         originalString: '4 apples, peeled, cored and sliced',
-  //         originalName: 'apples, peeled, cored and sliced',
-  //         metaInformation: ['cored', 'peeled', 'sliced'],
-  //         meta: ['cored', 'peeled', 'sliced'],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/apple.jpg',
-  //       },
-  //     ],
-  //     unusedIngredients: [],
-  //     likes: 7,
-  //   },
-  //   {
-  //     id: 556470,
-  //     title: 'Apple fritters',
-  //     image: 'https://spoonacular.com/recipeImages/556470-312x231.jpg',
-  //     imageType: 'jpg',
-  //     usedIngredientCount: 0,
-  //     missedIngredientCount: 3,
-  //     missedIngredients: [
-  //       {
-  //         id: 14003,
-  //         amount: 2.0,
-  //         unit: 'tablespoons',
-  //         unitLong: 'tablespoons',
-  //         unitShort: 'Tbsp',
-  //         aisle: 'Alcoholic Beverages',
-  //         name: 'beer',
-  //         original: '2 tablespoons of lager beer',
-  //         originalString: '2 tablespoons of lager beer',
-  //         originalName: 'lager beer',
-  //         metaInformation: [],
-  //         meta: [],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/beer.jpg',
-  //       },
-  //       {
-  //         id: 1123,
-  //         amount: 1.0,
-  //         unit: '',
-  //         unitLong: '',
-  //         unitShort: '',
-  //         aisle: 'Milk, Eggs, Other Dairy',
-  //         name: 'egg',
-  //         original: '1 egg',
-  //         originalString: '1 egg',
-  //         originalName: 'egg',
-  //         metaInformation: [],
-  //         meta: [],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/egg.png',
-  //       },
-  //       {
-  //         id: 1059003,
-  //         amount: 2.0,
-  //         unit: '',
-  //         unitLong: '',
-  //         unitShort: '',
-  //         aisle: 'Produce',
-  //         name: 'red delicious apples',
-  //         original: '2 Golden Delicious apples',
-  //         originalString: '2 Golden Delicious apples',
-  //         originalName: 'Golden Delicious apples',
-  //         metaInformation: [],
-  //         meta: [],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/red-delicious-apples.png',
-  //       },
-  //     ],
-  //     usedIngredients: [],
-  //     unusedIngredients: [
-  //       {
-  //         id: 9003,
-  //         amount: 1.0,
-  //         unit: 'serving',
-  //         unitLong: 'serving',
-  //         unitShort: 'serving',
-  //         aisle: 'Produce',
-  //         name: 'apples',
-  //         original: 'apples',
-  //         originalString: 'apples',
-  //         originalName: 'apples',
-  //         metaInformation: [],
-  //         meta: [],
-  //         image: 'https://spoonacular.com/cdn/ingredients_100x100/apple.jpg',
-  //       },
-  //     ],
-  //     likes: 243,
-  //   },
-  // ]);
-
-  // Declare recipeCards so it can be used in useEffects
-  let recipeCards;
-
-  //useEffect - similar to componentDidMount and componentDidUpdate
-  // useEffect(() => {
-  //   // Recipe Cards
-  //   console.log('in useEffect... here is the recipes:', recipes);
-  //   recipeCards = <p> hi!!!!</p>;
-
-  //   console.log('recipeCards', recipeCards);
-  // });
+  // Modal Hooks
+  const [modal, setModal] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [glutenFree, setGlutenFree] = useState('');
+  const [vegan, setVegan] = useState('');
+  const [vegetarian, setVegetarian] = useState('');
+  const [summary, setSummary] = useState('');
+  const [sourceUrl, setSourceUrl] = useState('');
 
   ///
   // Form's Functions
@@ -330,8 +61,6 @@ const Homepage = () => {
     // 2: recipes that minimize missing ingredients
     const ranking = shopping === 'Pre Shopping' ? 1 : 0;
 
-    // Matt Digel's Trail API Key for https://spoonacular.com/food-api/docs#Search-Recipes-by-Ingredients
-    const apiKey = '7598ea483f4a4386ab7c47949df3fee4';
     const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredientsList}&number=10&ranking=${ranking}&apiKey=${apiKey}`;
     // console.log('url', url);
 
@@ -357,7 +86,57 @@ const Homepage = () => {
     checked ? setShopping('Pre Shopping') : setShopping('Post Shopping');
   };
 
-  console.log('recipeCards right before return', recipeCards);
+  const getRecipeById = async (id) => {
+    const url = `https://api.spoonacular.com/recipes/${id}/information?includeNutrition=false&apiKey=${apiKey}`;
+    return await fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('recipe details GET request', data);
+        return data;
+      })
+      .catch((err) => {
+        console.log('get recipe by id fetch error:', err);
+        return err;
+      });
+  };
+
+  ///
+  // Modal Functions
+  ///
+
+  const handleOpenModal = async (id, title) => {
+    // Update State before get with data already in the app
+    setModalTitle(title);
+
+    // Get more info from Spoonacular
+    const data = await getRecipeById(id);
+    console.log('data in expand details', data);
+
+    // update state with new data from Spoonacular
+    data.glutenFree ? setGlutenFree('Yes') : setGlutenFree('No');
+    data.vegan ? setVegan('Yes') : setVegan('No');
+    data.vegetarian ? setVegetarian('Yes') : setVegetarian('No');
+    setSummary(data.summary);
+    setSourceUrl(data.sourceUrl);
+
+    setModal(true);
+  };
+
+  const handleViewWebsite = (sourceUrl) => {
+    setModalLoading(true);
+
+    setTimeout(() => {
+      setModal(false);
+      setModalLoading(false);
+      window.open(sourceUrl, '_blank');
+    }, 1000);
+  };
+
+  const handleCloseModal = () => {
+    console.log('in handleCloseModal');
+    setModal(false);
+  };
+
   return (
     <div className="site-layout-content search-background">
       <Card style={{ width: '66%', opacity: 0.9 }}>
@@ -444,19 +223,47 @@ const Homepage = () => {
           {/* <Space direction="horizontal"> */}
           {recipes.map((el, i) => {
             return (
-              // {startRow}
               <Card
                 key={i}
+                recipe_id={`${el.id}`}
                 style={{ width: 300, margin: '10px 10px 10px 10px' }}
                 cover={<img alt="example" src={`${el.image}`} />}
-                actions={[<HeartTwoTone key="favorite" />, <FullscreenOutlined />]}
+                actions={[
+                  <HeartTwoTone key="favorite" />,
+                  <FullscreenOutlined
+                    onClick={() => {
+                      handleOpenModal(el.id, el.title);
+                    }}
+                  />,
+                ]}
               >
                 <Meta title={`${el.title}`} description={`Missing Ingredients: ${el.missedIngredients[0].name}`} />
               </Card>
-              // {endRow}
             );
           })}
-          {/* </Space> */}
+
+          <Modal
+            title={modalTitle}
+            visible={modal}
+            onOk={() => handleViewWebsite(sourceUrl)}
+            confirmLoading={modalLoading}
+            onCancel={() => handleCloseModal()}
+          >
+            <p dangerouslySetInnerHTML={{ __html: summary }}></p>
+
+            <p>
+              <b>Gluten Free:&nbsp;</b>
+              {glutenFree}
+            </p>
+            <p>
+              <b>Vegan:&nbsp;</b>
+              {vegan}
+            </p>
+            <p>
+              <b>Vegetarian:&nbsp;</b>
+              {vegetarian}
+            </p>
+          </Modal>
         </div>
       </Card>
     </div>
