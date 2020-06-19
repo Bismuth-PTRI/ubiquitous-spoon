@@ -1,6 +1,5 @@
-import React from 'react';
-import { Redirect } from 'react-router-dom';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import * as actions from '../actions/actions';
 import { connect } from 'react-redux';
@@ -24,7 +23,6 @@ const Nav = (props) => {
       .then((res) => {
         if (res.status === 200) {
           props.clearUser();
-          return <Redirect to="/" />;
         } else {
           console.log('logout is returning a request but does not have 200 code');
         }
@@ -64,7 +62,7 @@ const Nav = (props) => {
           )}
           {props.username && (
             <Menu.Item key="6" onClick={logout}>
-              Logout
+              <Link to="/">Logout</Link>
             </Menu.Item>
           )}
         </Menu>
