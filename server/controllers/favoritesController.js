@@ -2,8 +2,10 @@ const pool = require('../models/usersModel');
 
 const favoritesController = {};
 
+// @desc      Get the userId of usern
+// @route     GET /api/favorites/:username
 favoritesController.getUserId = async (req, res, next) => {
-  const { username } = req.body;
+  const { username } = req.params;
   try {
     const userIdQuery = `SELECT id FROM ubiquitous_spoon.users WHERE username='${username}'`;
     const { rows } = await pool.query(userIdQuery);
@@ -15,6 +17,8 @@ favoritesController.getUserId = async (req, res, next) => {
   }
 };
 
+// @desc      Get list of favorites of user
+// @route     GET /api/favorites/:username
 favoritesController.getFavorites = async (req, res, next) => {
   const { userId } = res.locals;
   try {
@@ -28,6 +32,8 @@ favoritesController.getFavorites = async (req, res, next) => {
   }
 };
 
+// @desc      Add a favorite to the favorites list of user
+// @route     POST /api/favorites/:username
 favoritesController.addFavorite = async (req, res, next) => {
   const { recipeId } = req.body;
   try {
@@ -42,8 +48,18 @@ favoritesController.addFavorite = async (req, res, next) => {
   }
 };
 
-favoritesController.deleteFavorite = (req, res, next) => {
-  next();
+// @desc      Delete a favorite from the favorites list of user
+// @route     DELETE /api/favorites/:username
+favoritesController.deleteFavorite = async (req, res, next) => {
+  const { recipeId } = req.body;
+  try {
+    const { userId } = res.locals;
+    const deleteFavoriteQuery = `DELETE FROM ubiquitous_spoon.favorites WHERE (recipe_id='${recipeId}' AND user_id='${userId}');`;
+    await pool.query(deleteFavoriteQuery);
+    next();
+  } catch (err) {
+    next({ log: `deleteFavorite controller error: ${err.message}`, message: { err: 'An error with deleting this recipe from favorites list' } });
+  }
 };
 
 module.exports = favoritesController;
