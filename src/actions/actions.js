@@ -19,7 +19,6 @@ export const setUsername = (username) => ({
 
 export const clearUser = () => ({
   type: types.CLEAR_USER,
-  payload: user,
 });
 
 export const setUserPrefs = (userPrefs) => ({
