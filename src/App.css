@@ -17,9 +17,11 @@ body {
 }
 
 .search-background {
-  background-image: url('/img/brooke-lark-08bOYnH_r_E-unsplash_croped.jpg');
-  /* background-position: -300px 0px; */
-  background-repeat: no-repeat;
+  background: url('/img/brooke-lark-08bOYnH_r_E-unsplash_croped.jpg') no-repeat fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
   display: flex;
   min-height: 100vh;
 }
