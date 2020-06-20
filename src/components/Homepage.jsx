@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { Form, Input, Button, Card, Switch, Radio, Avatar, Space, Divider, Modal } from 'antd';
 import { MinusCircleOutlined, PlusOutlined, SecurityScanTwoTone, HeartTwoTone, FullscreenOutlined, ExpandAltOutlined } from '@ant-design/icons';
 
 // Matt Digel's Trail API Key for https://spoonacular.com/food-api/docs#Search-Recipes-by-Ingredients
-const apiKey = '7598ea483f4a4386ab7c47949df3fee4';
+const apiKey = process.env.API_KEY;
 
 const formItemLayout = {
   labelCol: {
@@ -25,7 +26,34 @@ const formItemLayoutWithOutLabel = {
 // For the recipe card
 const { Meta } = Card;
 
-const Homepage = () => {
+const mapStateToProps = (state) => ({
+  username: state.user.username,
+});
+
+const mapDispatchToProps = {};
+
+const Homepage = (props) => {
+  // Variables for conditionally rendering buttons
+  const isLoggedIn = props.username ? true : false;
+  const cardButtons = [];
+  if (isLoggedIn) {
+    cardButtons.push(
+      <HeartTwoTone
+        key="favorite"
+        onClick={() => {
+          handleAddFav(el.id);
+        }}
+      />
+    );
+  }
+  cardButtons.push(
+    <FullscreenOutlined
+      onClick={() => {
+        handleOpenModal(el.id, el.title);
+      }}
+    />
+  );
+
   // Search Hooks
   const [shopping, setShopping] = useState('Pre Shopping');
   const [recipes, setRecipes] = useState([]);
@@ -137,6 +165,38 @@ const Homepage = () => {
     setModal(false);
   };
 
+  ////////////
+  // Adding favorites to user
+  ////////////
+  const handleAddFav = async (recipeId) => {
+    // Get recipe data via API request
+    const recipe = await getRecipeById(recipeId);
+    console.log('recipe ->', recipe);
+
+    const data = {
+      recipeId,
+      title: recipe.title,
+      summary: recipe.summary,
+      source_url: recipe.sourceUrl,
+      image: recipe.image,
+    };
+    console.log('data ->', data);
+
+    // make a fetch request to backend to recipe to user's favorites AND add that recipes info to the recipe table
+    fetch(`/api/favorites/${props.username}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success) console.log('successfully added favorite');
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className="site-layout-content search-background">
       <Card style={{ width: '66%', opacity: 0.9 }}>
@@ -228,14 +288,7 @@ const Homepage = () => {
                 recipe_id={`${el.id}`}
                 style={{ width: 300, margin: '10px 10px 10px 10px' }}
                 cover={<img alt="example" src={`${el.image}`} />}
-                actions={[
-                  <HeartTwoTone key="favorite" />,
-                  <FullscreenOutlined
-                    onClick={() => {
-                      handleOpenModal(el.id, el.title);
-                    }}
-                  />,
-                ]}
+                actions={cardButtons}
               >
                 <Meta title={`${el.title}`} description={`Missing Ingredients: ${el.missedIngredients[0].name}`} />
               </Card>
@@ -270,4 +323,4 @@ const Homepage = () => {
   );
 };
 
-export default Homepage;
+export default connect(mapStateToProps, mapDispatchToProps)(Homepage);
