@@ -1,4 +1,5 @@
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 const fs = require('fs');
 const lessToJs = require('less-vars-to-js');
 const themeVariables = lessToJs(fs.readFileSync(path.join(__dirname, './src/style/theme.less'), 'utf8'));
@@ -99,4 +100,5 @@ module.exports = {
     // Enable importing JS / JSX files without specifying their extension
     extensions: ['.js', '.jsx'],
   },
+  plugins: [new Dotenv()],
 };
