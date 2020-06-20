@@ -300,6 +300,7 @@ const Homepage = (props) => {
             onOk={() => handleViewWebsite(sourceUrl)}
             confirmLoading={modalLoading}
             onCancel={() => handleCloseModal()}
+            okText="View Website"
           >
             <p dangerouslySetInnerHTML={{ __html: summary }}></p>
 
