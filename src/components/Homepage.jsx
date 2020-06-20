@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Form, Input, Button, Card, Switch, Radio, Avatar, Space, Divider, Modal } from 'antd';
-import { MinusCircleOutlined, PlusOutlined, SecurityScanTwoTone, HeartTwoTone, FullscreenOutlined, ExpandAltOutlined } from '@ant-design/icons';
+import {
+  MinusCircleOutlined,
+  PlusOutlined,
+  SecurityScanTwoTone,
+  HeartTwoTone,
+  FullscreenOutlined,
+  ExpandAltOutlined,
+  HeartFilled,
+} from '@ant-design/icons';
 // For the recipe card
 const { Meta } = Card;
 
@@ -33,7 +41,7 @@ const mapDispatchToProps = {};
 
 const Homepage = (props) => {
   // Variables for conditionally rendering buttons
-  const isLoggedIn = props.username ? true : false;
+  const isLoggedIn = !!props.username;
 
   // Search Hooks
   const [shopping, setShopping] = useState('Pre Shopping');
@@ -49,9 +57,9 @@ const Homepage = (props) => {
   const [summary, setSummary] = useState('');
   const [sourceUrl, setSourceUrl] = useState('');
 
-  ///
+  // /
   // Form's Functions
-  ///
+  // /
   const onFinish = async (values) => {
     console.log('Received values of form:', values);
 
@@ -73,20 +81,15 @@ const Homepage = (props) => {
     const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredientsList}&number=10&ranking=${ranking}&apiKey=${apiKey}`;
     // console.log('url', url);
 
-    //fetch request to spoonacular
+    // fetch request to spoonacular
     await fetch(url, {
       method: 'GET',
     })
       .then((res) => res.json())
       .then((data) => {
         console.log('data in fetch', data);
+        data.map((el) => (el.favorite = false));
         setRecipes(data);
-        // recipeCards = () => <p>hi!!!!</p>;
-        // console.log('recipeCards in fetch:', recipeCards);
-        // recipes.map((el, i) => {
-        //   console.log('el:', el);
-        //   return <p>hi!!!</p>;
-        // });
       })
       .catch((err) => console.log('spoonacular fetch err', err));
   };
@@ -109,9 +112,9 @@ const Homepage = (props) => {
       });
   };
 
-  ///
+  // /
   // Modal Functions
-  ///
+  // /
 
   const handleOpenModal = async (id, title) => {
     // Update State before get with data already in the app
@@ -146,13 +149,12 @@ const Homepage = (props) => {
     setModal(false);
   };
 
-  ////////////
+  // //////////
   // Adding favorites to user
-  ////////////
+  // //////////
   const handleAddFav = async (recipeId) => {
     // Get recipe data via API request
     const recipe = await getRecipeById(recipeId);
-    console.log('recipe ->', recipe);
 
     const data = {
       recipeId,
@@ -161,7 +163,6 @@ const Homepage = (props) => {
       source_url: recipe.sourceUrl,
       image: recipe.image,
     };
-    console.log('data ->', data);
 
     // make a fetch request to backend to recipe to user's favorites AND add that recipes info to the recipe table
     fetch(`/api/favorites/${props.username}`, {
@@ -173,7 +174,19 @@ const Homepage = (props) => {
     })
       .then((res) => res.json())
       .then((resData) => {
-        if (resData.success) console.log('successfully added favorite');
+        if (resData.success) {
+          console.log('successfully added favorite');
+
+          // Update recipe list's favortie property to true
+          const newRecipesList = recipes.map((el) => {
+            if (el.id === recipeId) {
+              el.favorite = true;
+            }
+            return el;
+          });
+
+          setRecipes(newRecipesList);
+        }
       })
       .catch((err) => console.log(err));
   };
@@ -265,7 +278,9 @@ const Homepage = (props) => {
           {recipes.map((el, i) => {
             // Conditionally render add favorite button if a user is logged in
             const cardButtons = [];
-            if (isLoggedIn) {
+
+            // Construct cardButtons before favorited
+            if (isLoggedIn && !el.favorite) {
               cardButtons.push(
                 <HeartTwoTone
                   key="favorite"
@@ -274,7 +289,16 @@ const Homepage = (props) => {
                   }}
                 />
               );
+            } else if (isLoggedIn && el.favorite) {
+              cardButtons.push(
+                <HeartFilled
+                  key="favorite"
+                  style={{ color: '#a294f6' }}
+                  // onClick= removeFav!!!!!!!!!!!!!!
+                />
+              );
             }
+
             cardButtons.push(
               <FullscreenOutlined
                 onClick={() => {
@@ -282,6 +306,8 @@ const Homepage = (props) => {
                 }}
               />
             );
+
+            //
 
             return (
               <Card
@@ -304,7 +330,7 @@ const Homepage = (props) => {
             onCancel={() => handleCloseModal()}
             okText="View Website"
           >
-            <p dangerouslySetInnerHTML={{ __html: summary }}></p>
+            <p dangerouslySetInnerHTML={{ __html: summary }} />
 
             <p>
               <b>Gluten Free:&nbsp;</b>
