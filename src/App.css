@@ -44,3 +44,17 @@ body {
   height: 50px;
   padding: 15px 0px 10px;
 }
+
+.SignUp_Container {
+  border-radius: 10px;
+  padding: 5rem;
+  margin: 5rem;
+  background-color: #fff;
+}
+
+.Login_Container {
+  border-radius: 10px;
+  padding: 10rem;
+  margin: 5rem;
+  background-color: #fff;
+}
