@@ -25,9 +25,6 @@ const formItemLayoutWithOutLabel = {
   },
 };
 
-// For the recipe card
-const { Meta } = Card;
-
 const mapStateToProps = (state) => ({
   username: state.user.username,
 });

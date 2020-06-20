@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import * as actions from '../actions/actions';
-import { connect } from 'react-redux';
 
 const mapStateToProps = (state) => ({
   username: state.user.username,
@@ -51,17 +51,18 @@ const Nav = (props) => {
             </Menu.Item>
           )}
           {!props.username && (
-            <Menu.Item key="4">
+            <Menu.Item style={{ float: 'right' }} key="5">
               <Link to="/login">Login</Link>
             </Menu.Item>
           )}
           {!props.username && (
-            <Menu.Item key="5">
+            <Menu.Item style={{ float: 'right' }} key="4">
               <Link to="/signup">Signup</Link>
             </Menu.Item>
           )}
+
           {props.username && (
-            <Menu.Item key="6" onClick={logout}>
+            <Menu.Item style={{ float: 'right' }} key="6" onClick={logout}>
               <Link to="/">Logout</Link>
             </Menu.Item>
           )}
