@@ -29,10 +29,28 @@ const Favorites = (props) => {
   }, []);
 
   const removeFav = (recipeId) => {
-    console.log(recipeId);
-    return;
+    const data = { recipeId };
+
+    // make a fetch request to backend to delete the recipe from user's favorites
+    fetch(`/api/removefavorite/${props.username}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success) console.log('successfully removed favorite');
+      })
+      .catch((err) => console.log(err));
+
+    // Once favorite has been deleted from the DB, remove it from the favs array in state
+    const newFavs = favs.filter((fav) => fav.id !== recipeId);
+    setFavs(newFavs);
   };
 
+  console.log('favs is ->', favs);
   return (
     <div className="site-layout-content">
       <Card style={{ width: '66%', opacity: 0.9 }}>
