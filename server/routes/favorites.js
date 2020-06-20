@@ -9,7 +9,7 @@ router.get('/:username', favoritesController.getUserId, favoritesController.getF
 });
 
 // Add to favorites
-router.post('/:username', favoritesController.getUserId, favoritesController.addFavorite, (req, res) => {
+router.post('/:username', favoritesController.getUserId, favoritesController.addRecipe, favoritesController.addFavorite, (req, res) => {
   res.status(200).json({ success: true });
 });
 

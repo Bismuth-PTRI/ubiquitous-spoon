@@ -32,6 +32,18 @@ favoritesController.getFavorites = async (req, res, next) => {
   }
 };
 
+// Add recipe information to our database
+favoritesController.addRecipe = async (req, res, next) => {
+  const { recipeId, title, summary, source_url, image } = req.body;
+  try {
+    const text = `INSERT INTO ubiquitous_spoon.recipes (id, title, summary, source_url, image) VALUES ('${recipeId}', '${title}', '${summary}', '${source_url}', '${image}')`;
+    pool.query(text);
+    next();
+  } catch (err) {
+    next({ log: `addRecipe controller error: ${err.message}`, message: { err: 'An error occurred in addRecipe middleware' } });
+  }
+};
+
 // @desc      Add a favorite to the favorites list of user
 // @route     POST /api/favorites/:username
 favoritesController.addFavorite = async (req, res, next) => {
