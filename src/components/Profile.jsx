@@ -132,7 +132,7 @@ const Profile = (props) => {
         if (foodPrefs.vegan) defaultChecks.push('Vegan');
         if (foodPrefs.vegetarian) defaultChecks.push('Vegetarian');
 
-        // populate the form too
+        // populate the form with user's settings
         form.setFieldsValue({
           email: resData.userInfo.email,
           fullName: resData.userInfo.name,
