@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Switch, Radio, Avatar, Space, Divider } from 'antd';
-import { MehOutlined, LinkOutlined } from '@ant-design/icons';
+import { DeleteOutlined, MehOutlined, LinkOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import * as actions from '../actions/actions';
 
@@ -50,7 +50,6 @@ const Favorites = (props) => {
     setFavs(newFavs);
   };
 
-  console.log('favs is ->', favs);
   return (
     <div className="site-layout-content">
       <Card style={{ width: '66%', opacity: 0.9 }}>
@@ -63,7 +62,7 @@ const Favorites = (props) => {
                 style={{ width: 300, margin: '10px 10px 10px 10px' }}
                 cover={<img alt="example" src={`${fav.image}`} />}
                 actions={[
-                  <MehOutlined
+                  <DeleteOutlined
                     onClick={() => {
                       removeFav(fav.id);
                     }}
