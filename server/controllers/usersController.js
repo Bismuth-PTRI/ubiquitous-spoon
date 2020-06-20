@@ -97,6 +97,7 @@ usersController.addUser = (req, res, next) => {
     if (err) {
       return next({ log: 'addUser', message: { err: 'Error in addUser' } });
     }
+    res.locals.username = req.body.username;
     next();
   });
 };
