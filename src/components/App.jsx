@@ -1,5 +1,6 @@
 import React from 'react';
-import '../../node_modules/antd/dist/antd.css';
+import '../../node_modules/antd/dist/antd.less';
+import '../style/theme.less';
 import '../App.css';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
