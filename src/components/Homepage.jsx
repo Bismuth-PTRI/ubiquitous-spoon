@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Card, Switch, Radio, Avatar, Space, Divider, Modal } from 'antd';
 import { MinusCircleOutlined, PlusOutlined, SecurityScanTwoTone, HeartTwoTone, FullscreenOutlined, ExpandAltOutlined } from '@ant-design/icons';
+// For the recipe card
+const { Meta } = Card;
 
 // Matt Digel's Trail API Key for https://spoonacular.com/food-api/docs#Search-Recipes-by-Ingredients
 const apiKey = '7598ea483f4a4386ab7c47949df3fee4';
@@ -21,9 +23,6 @@ const formItemLayoutWithOutLabel = {
     sm: { span: 20, offset: 4 },
   },
 };
-
-// For the recipe card
-const { Meta } = Card;
 
 const Homepage = () => {
   // Search Hooks
