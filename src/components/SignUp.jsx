@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { Form, Input, Tooltip, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Alert } from 'antd';
+import { PageHeader, Form, Input, Tooltip, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Alert } from 'antd';
 import { connect } from 'react-redux';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import * as actions from '../actions/actions';
@@ -101,7 +101,10 @@ const SignUp = (props) => {
   }
 
   return (
-    <div className="site-layout-content">
+    <div className="site-layout-content SignUp_Container">
+      <PageHeader>
+        <h1>Sign Up</h1>
+      </PageHeader>
       <Form
         {...formItemLayout}
         form={form}

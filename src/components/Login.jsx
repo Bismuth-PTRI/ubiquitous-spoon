@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { Form, Input, Row, Col, Button, Alert } from 'antd';
+import { PageHeader, Form, Input, Row, Col, Button, Alert } from 'antd';
 import { connect } from 'react-redux';
 import * as actions from '../actions/actions';
 
@@ -86,7 +86,10 @@ const Login = (props) => {
   }
 
   return (
-    <div className="site-layout-content">
+    <div className="site-layout-content Login_Container">
+      <PageHeader>
+        <h1>Login</h1>
+      </PageHeader>
       <Form
         {...formItemLayout}
         form={form}

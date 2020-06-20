@@ -56,8 +56,6 @@ const App = () => {
             </Content>
           </Route>
         </Switch>
-
-        <Footer style={{ textAlign: 'center' }}>Footer</Footer>
       </Layout>
     </Router>
   );
