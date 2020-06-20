@@ -32,8 +32,8 @@ const Favorites = (props) => {
     const data = { recipeId };
 
     // make a fetch request to backend to delete the recipe from user's favorites
-    fetch(`/api/removefavorite/${props.username}`, {
-      method: 'POST',
+    fetch(`/api/favorites/${props.username}`, {
+      method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
