@@ -5,7 +5,7 @@ import { MinusCircleOutlined, PlusOutlined, SecurityScanTwoTone, HeartTwoTone, F
 // For the recipe card
 const { Meta } = Card;
 
-// Matt Digel's Trail API Key for https://spoonacular.com/food-api/docs#Search-Recipes-by-Ingredients
+// Matt Digel's Trial API Key for https://spoonacular.com/food-api/
 const apiKey = process.env.API_KEY;
 
 const formItemLayout = {
@@ -34,24 +34,6 @@ const mapDispatchToProps = {};
 const Homepage = (props) => {
   // Variables for conditionally rendering buttons
   const isLoggedIn = props.username ? true : false;
-  const cardButtons = [];
-  if (isLoggedIn) {
-    cardButtons.push(
-      <HeartTwoTone
-        key="favorite"
-        onClick={() => {
-          handleAddFav(el.id);
-        }}
-      />
-    );
-  }
-  cardButtons.push(
-    <FullscreenOutlined
-      onClick={() => {
-        handleOpenModal(el.id, el.title);
-      }}
-    />
-  );
 
   // Search Hooks
   const [shopping, setShopping] = useState('Pre Shopping');
@@ -281,6 +263,26 @@ const Homepage = (props) => {
         <div className="Recipe_Container">
           {/* <Space direction="horizontal"> */}
           {recipes.map((el, i) => {
+            // Conditionally render add favorite button if a user is logged in
+            const cardButtons = [];
+            if (isLoggedIn) {
+              cardButtons.push(
+                <HeartTwoTone
+                  key="favorite"
+                  onClick={() => {
+                    handleAddFav(el.id);
+                  }}
+                />
+              );
+            }
+            cardButtons.push(
+              <FullscreenOutlined
+                onClick={() => {
+                  handleOpenModal(el.id, el.title);
+                }}
+              />
+            );
+
             return (
               <Card
                 key={i}
