@@ -38,11 +38,18 @@ favoritesController.addFavorite = async (req, res, next) => {
   const { recipeId } = req.body;
   try {
     const { userId } = res.locals;
-    const addFavoriteQuery = `INSERT INTO ubiquitous_spoon.favorites (user_id, recipe_id)
-    VALUES ($1, $2)`;
-    const addFavoriteValues = [userId, recipeId];
-    await pool.query(addFavoriteQuery, addFavoriteValues);
-    next();
+    const existsQuery = `SELECT recipe_id FROM ubiquitous_spoon.favorites WHERE recipe_id=${recipeId}`;
+    const { rows } = await pool.query(existsQuery);
+    if (rows.length) {
+      next({ log: `addFavorite controller error: DUPLICATE RECIPE`, message: { err: 'This recipe is already added in your favorites' } });
+    } else {
+      const addFavoriteQuery = `INSERT INTO ubiquitous_spoon.favorites (user_id, recipe_id)
+      VALUES ($1, $2) RETURNING *`;
+      const addFavoriteValues = [userId, recipeId];
+      pool.query(addFavoriteQuery, addFavoriteValues);
+
+      next();
+    }
   } catch (err) {
     next({ log: `addFavorite controller error: ${err.message}`, message: { err: 'An error with adding this recipe to favorites occurred' } });
   }
