@@ -1,4 +1,5 @@
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: {
@@ -108,4 +109,5 @@ module.exports = {
     // Enable importing JS / JSX files without specifying their extension
     extensions: ['.js', '.jsx'],
   },
+  plugins: [new Dotenv()],
 };
