@@ -29,6 +29,15 @@ npm install
 npm run dev
 ```
 
+## Usage
+Create a `.env` file in the root of your project and insert key/value pairs in the following format of `KEY=VALUE`:
+```
+PORT=3000
+PG_URI=PostgresUrlGoesHere
+API_KEY=SpoonacularAPIKeyGoesHere
+```
+
+
 ## Production
 
 ## Authors
