@@ -116,29 +116,30 @@ const Homepage = (props) => {
     // Get recipes
     let data = await getRecipesWithIngredients(ingredientsList, ranking, apiKey);
 
-    // fetch request to backend for user's favorites
-    const userFavs = await getFavsForUser(props.username);
+    // if username is exists, then the user is loggedin
+    if (props.username) {
+      // fetch request to backend for user's favorites
+      const userFavs = await getFavsForUser(props.username);
 
-    // put recipe id's in object fot O(n) look up
-    const FavIdObj = {};
-    for (let i = 0; i < userFavs.length; i++) {
-      const { id } = userFavs[i];
-      console.log('id', id);
-      FavIdObj[id] = true;
-    }
-
-    // If any of the user's favorites are in the current search
-    // then change the 'favorites' property for that recipe to true
-    data = data.map((el) => {
-      const tempId = el.id;
-      const newEl = el;
-
-      if (FavIdObj[tempId]) {
-        // if recipe id matches a favorite's recipe_id
-        newEl.favorite = true;
+      // put recipe id's in object fot O(n) look up
+      const FavIdObj = {};
+      for (let i = 0; i < userFavs.length; i++) {
+        const { id } = userFavs[i];
+        FavIdObj[id] = true;
       }
-      return el;
-    });
+
+      // If any of the user's favorites are in the current search
+      // then change the 'favorites' property for that recipe to true
+      data = data.map((el) => {
+        const tempId = el.id;
+
+        if (FavIdObj[tempId]) {
+          // if recipe id matches a favorite's recipe_id
+          el.favorite = true;
+        }
+        return el;
+      });
+    }
 
     // Update local state via a hook with the recipes;
     setRecipes(data);
@@ -249,7 +250,7 @@ const Homepage = (props) => {
       .catch((err) => {
         console.log(err);
 
-        //Set favorite back to false if error occurs
+        // Set favorite back to false if error occurs
         const errorRecipesList = recipes.map((el) => {
           if (el.id === recipeId) {
             el.favorite = false;
