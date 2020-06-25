@@ -7,7 +7,7 @@ const favoritesController = {};
 favoritesController.getUserId = async (req, res, next) => {
   const { username } = req.params;
   try {
-    const userIdQuery = `SELECT id FROM ubiquitous_spoon.users WHERE username='${username}'`;
+    const userIdQuery = `SELECT id FROM users WHERE username='${username}'`;
     const { rows } = await pool.query(userIdQuery);
     const userId = rows[0].id;
     res.locals.userId = userId;
@@ -22,8 +22,8 @@ favoritesController.getUserId = async (req, res, next) => {
 favoritesController.getFavorites = async (req, res, next) => {
   const { userId } = res.locals;
   try {
-    const queryString = `SELECT r.id, title, summary, source_url, image FROM ubiquitous_spoon.favorites f 
-    JOIN ubiquitous_spoon.recipes r ON f.recipe_id = r.id WHERE user_id='${userId}'`;
+    const queryString = `SELECT r.id, title, summary, source_url, image FROM favorites f 
+    JOIN recipes r ON f.recipe_id = r.id WHERE user_id='${userId}'`;
     const { rows } = await pool.query(queryString);
     res.locals.favorites = rows;
     next();
@@ -36,7 +36,7 @@ favoritesController.getFavorites = async (req, res, next) => {
 favoritesController.addRecipe = async (req, res, next) => {
   const { recipeId, title, summary, source_url, image } = req.body;
   try {
-    const text = `INSERT INTO ubiquitous_spoon.recipes (id, title, summary, source_url, image) VALUES ('${recipeId}', '${title}', '${summary}', '${source_url}', '${image}')`;
+    const text = `INSERT INTO recipes (id, title, summary, source_url, image) VALUES ('${recipeId}', '${title}', '${summary}', '${source_url}', '${image}')`;
     pool.query(text);
     next();
   } catch (err) {
@@ -50,12 +50,12 @@ favoritesController.addFavorite = async (req, res, next) => {
   const { recipeId } = req.body;
   try {
     const { userId } = res.locals;
-    const existsQuery = `SELECT recipe_id FROM ubiquitous_spoon.favorites WHERE recipe_id=${recipeId} AND user_id='${userId}'`;
+    const existsQuery = `SELECT recipe_id FROM favorites WHERE recipe_id=${recipeId} AND user_id='${userId}'`;
     const { rows } = await pool.query(existsQuery);
     if (rows.length) {
       next({ log: `addFavorite controller error: DUPLICATE RECIPE`, message: { err: 'This recipe is already added in your favorites' } });
     } else {
-      const addFavoriteQuery = `INSERT INTO ubiquitous_spoon.favorites (user_id, recipe_id)
+      const addFavoriteQuery = `INSERT INTO favorites (user_id, recipe_id)
       VALUES ($1, $2) RETURNING *`;
       const addFavoriteValues = [userId, recipeId];
       pool.query(addFavoriteQuery, addFavoriteValues);
@@ -73,7 +73,7 @@ favoritesController.deleteFavorite = async (req, res, next) => {
   const { recipeId } = req.body;
   try {
     const { userId } = res.locals;
-    const deleteFavoriteQuery = `DELETE FROM ubiquitous_spoon.favorites WHERE (recipe_id='${recipeId}' AND user_id='${userId}');`;
+    const deleteFavoriteQuery = `DELETE FROM favorites WHERE (recipe_id='${recipeId}' AND user_id='${userId}');`;
     await pool.query(deleteFavoriteQuery);
     next();
   } catch (err) {
