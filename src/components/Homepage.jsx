@@ -58,9 +58,44 @@ const Homepage = (props) => {
   const [sourceUrl, setSourceUrl] = useState('');
 
   // /
-  // Form's Functions
+  // Search Functions
   // /
-  const onFinish = async (values) => {
+  const getFavsForUser = (username) => {
+    return fetch(`/api/favorites/${username}`)
+      .then((res) => res.json())
+      .then((data) => {
+        // Store the recipes in state
+        // setFavs(resData.favorites);
+        return data.favorites;
+      })
+      .catch((err) => {
+        console.log(err);
+        return err;
+      });
+  };
+
+  const getRecipesWithIngredients = (ingredientsList, ranking, apiKey) => {
+    const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredientsList}&number=10&ranking=${ranking}&apiKey=${apiKey}`;
+
+    // fetch request to spoonacular for recipes
+    return fetch(url, {
+      method: 'GET',
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('data in fetch', data);
+
+        // add a favorite property - used to fill in heart icon
+        data.map((el) => (el.favorite = false));
+        return data;
+      })
+      .catch((err) => {
+        console.log('spoonacular fetch err', err);
+        return err;
+      });
+  };
+
+  const searchForRecipes = async (values) => {
     console.log('Received values of form:', values);
 
     // create ingredients comma seperated list for query params
@@ -78,20 +113,36 @@ const Homepage = (props) => {
     // 2: recipes that minimize missing ingredients
     const ranking = shopping === 'Pre Shopping' ? 1 : 0;
 
-    const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredientsList}&number=10&ranking=${ranking}&apiKey=${apiKey}`;
-    // console.log('url', url);
+    // Get recipes
+    let data = await getRecipesWithIngredients(ingredientsList, ranking, apiKey);
 
-    // fetch request to spoonacular
-    await fetch(url, {
-      method: 'GET',
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('data in fetch', data);
-        data.map((el) => (el.favorite = false));
-        setRecipes(data);
-      })
-      .catch((err) => console.log('spoonacular fetch err', err));
+    // if username is exists, then the user is loggedin
+    if (props.username) {
+      // fetch request to backend for user's favorites
+      const userFavs = await getFavsForUser(props.username);
+
+      // put recipe id's in object fot O(n) look up
+      const FavIdObj = {};
+      for (let i = 0; i < userFavs.length; i++) {
+        const { id } = userFavs[i];
+        FavIdObj[id] = true;
+      }
+
+      // If any of the user's favorites are in the current search
+      // then change the 'favorites' property for that recipe to true
+      data = data.map((el) => {
+        const tempId = el.id;
+
+        if (FavIdObj[tempId]) {
+          // if recipe id matches a favorite's recipe_id
+          el.favorite = true;
+        }
+        return el;
+      });
+    }
+
+    // Update local state via a hook with the recipes;
+    setRecipes(data);
   };
 
   const onToggleChange = (checked) => {
@@ -100,7 +151,7 @@ const Homepage = (props) => {
 
   const getRecipeById = async (id) => {
     const url = `https://api.spoonacular.com/recipes/${id}/information?includeNutrition=false&apiKey=${apiKey}`;
-    return await fetch(url)
+    return fetch(url)
       .then((res) => res.json())
       .then((data) => {
         console.log('recipe details GET request', data);
@@ -153,6 +204,24 @@ const Homepage = (props) => {
   // Adding favorites to user
   // //////////
   const handleAddFav = async (recipeId) => {
+    //
+    // first update state for quick UI feedback
+    //
+
+    // Update recipe list's favortie property to true
+    const newRecipesList = recipes.map((el) => {
+      if (el.id === recipeId) {
+        el.favorite = true;
+      }
+      return el;
+    });
+
+    setRecipes(newRecipesList);
+
+    //
+    // Get Recipe from Spoonacular to then save to DB
+    //
+
     // Get recipe data via API request
     const recipe = await getRecipeById(recipeId);
 
@@ -176,19 +245,21 @@ const Homepage = (props) => {
       .then((resData) => {
         if (resData.success) {
           console.log('successfully added favorite');
-
-          // Update recipe list's favortie property to true
-          const newRecipesList = recipes.map((el) => {
-            if (el.id === recipeId) {
-              el.favorite = true;
-            }
-            return el;
-          });
-
-          setRecipes(newRecipesList);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+
+        // Set favorite back to false if error occurs
+        const errorRecipesList = recipes.map((el) => {
+          if (el.id === recipeId) {
+            el.favorite = false;
+          }
+          return el;
+        });
+
+        setRecipes(errorRecipesList);
+      });
   };
 
   return (
@@ -197,7 +268,9 @@ const Homepage = (props) => {
         <Form
           name="dynamic_form_item"
           // {...formItemLayoutWithOutLabel}
-          onFinish={onFinish}
+          onFinish={(values) => {
+            searchForRecipes(values);
+          }}
           size="large"
         >
           <Form.List name="ingredients">
