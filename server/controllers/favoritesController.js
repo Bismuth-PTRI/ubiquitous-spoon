@@ -58,12 +58,12 @@ favoritesController.addRecipe = async (req, res, next) => {
   } catch (err) {
     console.log('err in addRecipe', err);
     next();
+  }
 };
 
 // @desc      Add a favorite to the favorites list of user
 // @route     POST /api/favorites/:username
 favoritesController.addFavorite = async (req, res, next) => {
-
   const { recipeId } = req.body;
   try {
     const { userId } = res.locals;
