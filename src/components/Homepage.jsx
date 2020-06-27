@@ -78,9 +78,44 @@ const Homepage = (props) => {
     console.log('intolerancesList=====', intoleranceList);
   }, [prefsList, intoleranceList]);
   // /
-  // Form's Functions
+  // Search Functions
   // /
-  const onFinish = async (values) => {
+  const getFavsForUser = (username) => {
+    return fetch(`/api/favorites/${username}`)
+      .then((res) => res.json())
+      .then((data) => {
+        // Store the recipes in state
+        // setFavs(resData.favorites);
+        return data.favorites;
+      })
+      .catch((err) => {
+        console.log(err);
+        return err;
+      });
+  };
+
+  const getRecipesWithIngredients = (ingredientsList, ranking, apiKey) => {
+    const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredientsList}&number=10&ranking=${ranking}&apiKey=${apiKey}`;
+
+    // fetch request to spoonacular for recipes
+    return fetch(url, {
+      method: 'GET',
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('data in fetch', data);
+
+        // add a favorite property - used to fill in heart icon
+        data.map((el) => (el.favorite = false));
+        return data;
+      })
+      .catch((err) => {
+        console.log('spoonacular fetch err', err);
+        return err;
+      });
+  };
+
+  const searchForRecipes = async (values) => {
     console.log('Received values of form:', values);
 
     // create ingredients comma seperated list for query params
@@ -101,17 +136,36 @@ const Homepage = (props) => {
     const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredientsList}&number=10&ranking=${ranking}&apiKey=${apiKey}&diet=${prefsList}&intolerances=${intoleranceList}`;
     console.log('url', url);
 
-    // fetch request to spoonacular
-    await fetch(url, {
-      method: 'GET',
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('data in fetch', data);
-        data.map((el) => (el.favorite = false));
-        setRecipes(data);
-      })
-      .catch((err) => console.log('spoonacular fetch err', err));
+    // Get recipes
+    let data = await getRecipesWithIngredients(ingredientsList, ranking, apiKey);
+
+    // if username is exists, then the user is loggedin
+    if (props.username) {
+      // fetch request to backend for user's favorites
+      const userFavs = await getFavsForUser(props.username);
+
+      // put recipe id's in object fot O(n) look up
+      const FavIdObj = {};
+      for (let i = 0; i < userFavs.length; i++) {
+        const { id } = userFavs[i];
+        FavIdObj[id] = true;
+      }
+
+      // If any of the user's favorites are in the current search
+      // then change the 'favorites' property for that recipe to true
+      data = data.map((el) => {
+        const tempId = el.id;
+
+        if (FavIdObj[tempId]) {
+          // if recipe id matches a favorite's recipe_id
+          el.favorite = true;
+        }
+        return el;
+      });
+    }
+
+    // Update local state via a hook with the recipes;
+    setRecipes(data);
   };
 
   const onToggleChange = (checked) => {
@@ -120,7 +174,7 @@ const Homepage = (props) => {
 
   const getRecipeById = async (id) => {
     const url = `https://api.spoonacular.com/recipes/${id}/information?includeNutrition=false&apiKey=${apiKey}`;
-    return await fetch(url)
+    return fetch(url)
       .then((res) => res.json())
       .then((data) => {
         console.log('recipe details GET request', data);
@@ -142,7 +196,6 @@ const Homepage = (props) => {
 
     // Get more info from Spoonacular
     const data = await getRecipeById(id);
-    console.log('data in expand details', data);
 
     // update state with new data from Spoonacular
     data.glutenFree ? setGlutenFree('Yes') : setGlutenFree('No');
@@ -165,14 +218,62 @@ const Homepage = (props) => {
   };
 
   const handleCloseModal = () => {
-    console.log('in handleCloseModal');
     setModal(false);
+  };
+
+  // //////////
+  // Removing favorites to user
+  // //////////
+  const handleRemoveFav = (recipeId) => {
+    const data = { recipeId };
+
+    // make a fetch request to backend to delete the recipe from user's favorites
+    fetch(`/api/favorites/${props.username}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success) console.log('successfully removed favorite');
+      })
+      .catch((err) => console.log(err));
+
+    // Once favorite has been deleted from the DB, remove it from the favs array in state
+    const newRecipesList = recipes.map((el) => {
+      if (el.id === recipeId) {
+        el.favorite = false;
+      }
+      return el;
+    });
+
+    setRecipes(newRecipesList);
   };
 
   // //////////
   // Adding favorites to user
   // //////////
   const handleAddFav = async (recipeId) => {
+    //
+    // first update state for quick UI feedback
+    //
+
+    // Update recipe list's favortie property to true
+    const newRecipesList = recipes.map((el) => {
+      if (el.id === recipeId) {
+        el.favorite = true;
+      }
+      return el;
+    });
+
+    setRecipes(newRecipesList);
+
+    //
+    // Get Recipe from Spoonacular to then save to DB
+    //
+
     // Get recipe data via API request
     const recipe = await getRecipeById(recipeId);
 
@@ -196,19 +297,21 @@ const Homepage = (props) => {
       .then((resData) => {
         if (resData.success) {
           console.log('successfully added favorite');
-
-          // Update recipe list's favortie property to true
-          const newRecipesList = recipes.map((el) => {
-            if (el.id === recipeId) {
-              el.favorite = true;
-            }
-            return el;
-          });
-
-          setRecipes(newRecipesList);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+
+        // Set favorite back to false if error occurs
+        const errorRecipesList = recipes.map((el) => {
+          if (el.id === recipeId) {
+            el.favorite = false;
+          }
+          return el;
+        });
+
+        setRecipes(errorRecipesList);
+      });
   };
 
   return (
@@ -217,7 +320,9 @@ const Homepage = (props) => {
         <Form
           name="dynamic_form_item"
           // {...formItemLayoutWithOutLabel}
-          onFinish={onFinish}
+          onFinish={(values) => {
+            searchForRecipes(values);
+          }}
           size="large"
         >
           <Form.List name="ingredients">
@@ -317,6 +422,9 @@ const Homepage = (props) => {
                   key="favorite"
                   style={{ color: '#a294f6' }}
                   // onClick= removeFav!!!!!!!!!!!!!!
+                  onClick={() => {
+                    handleRemoveFav(el.id);
+                  }}
                 />
               );
             }
@@ -339,7 +447,10 @@ const Homepage = (props) => {
                 cover={<img alt="example" src={`${el.image}`} />}
                 actions={cardButtons}
               >
-                <Meta title={`${el.title}`} description={`Missing Ingredients: ${el.missedIngredients[0].name}`} />
+                <Meta
+                  title={`${el.title}`}
+                  description={`Missing Ingredients: ${el.missedIngredients[0].name}`}
+                />
               </Card>
             );
           })}

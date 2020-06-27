@@ -1,0 +1,62 @@
+//  Database Scripts to Create 
+//  Postgres Ubiquitous Spoon
+//  in AWS RDS
+// -----------------------------
+CREATE DATABASE ubiquitous_spoon
+    WITH 
+    OWNER = ubiq
+    ENCODING = 'UTF8'
+    CONNECTION LIMIT = -1;
+
+COMMENT ON DATABASE ubiquitous_spoon
+    IS 'ubiquitous_spoon db';
+
+CREATE TABLE users
+(
+    id SERIAL UNIQUE ,
+    username text COLLATE pg_catalog."default",
+    password text COLLATE pg_catalog."default",
+    name text COLLATE pg_catalog."default",
+    email text COLLATE pg_catalog."default",
+    vegan boolean,
+    vegetarian boolean,
+    gluten_free boolean,
+    PRIMARY KEY (id)
+)
+
+CREATE TABLE sessions
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp without time zone,
+    CONSTRAINT sessions_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+
+CREATE TABLE recipes
+(
+    id SERIAL UNIQUE,
+    title text COLLATE pg_catalog."default",
+    summary text COLLATE pg_catalog."default",
+    source_url text COLLATE pg_catalog."default",
+    image text COLLATE pg_catalog."default",
+    PRIMARY KEY (id)
+)
+
+CREATE TABLE favorites
+(
+    id SERIAL UNIQUE,
+    user_id integer,
+    recipe_id integer,
+    CONSTRAINT favorites_pkey PRIMARY KEY (id),
+    CONSTRAINT favorites_id_key UNIQUE (id),
+    CONSTRAINT recipes_id FOREIGN KEY (recipe_id)
+        REFERENCES recipes (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT users_id FOREIGN KEY (user_id)
+        REFERENCES users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
