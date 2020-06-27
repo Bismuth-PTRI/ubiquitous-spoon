@@ -173,7 +173,6 @@ const Homepage = (props) => {
 
     // Get more info from Spoonacular
     const data = await getRecipeById(id);
-    console.log('data in expand details', data);
 
     // update state with new data from Spoonacular
     data.glutenFree ? setGlutenFree('Yes') : setGlutenFree('No');
@@ -196,8 +195,38 @@ const Homepage = (props) => {
   };
 
   const handleCloseModal = () => {
-    console.log('in handleCloseModal');
     setModal(false);
+  };
+
+  // //////////
+  // Removing favorites to user
+  // //////////
+  const handleRemoveFav = recipeId => {
+    const data = { recipeId };
+
+    // make a fetch request to backend to delete the recipe from user's favorites
+    fetch(`/api/favorites/${props.username}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success) console.log('successfully removed favorite');
+      })
+      .catch((err) => console.log(err));
+
+    // Once favorite has been deleted from the DB, remove it from the favs array in state
+    const newRecipesList = recipes.map((el) => {
+      if (el.id === recipeId) {
+        el.favorite = false;
+      }
+      return el;
+    });
+
+    setRecipes(newRecipesList);
   };
 
   // //////////
@@ -368,6 +397,9 @@ const Homepage = (props) => {
                   key="favorite"
                   style={{ color: '#a294f6' }}
                   // onClick= removeFav!!!!!!!!!!!!!!
+                  onClick = {() => {
+                    handleRemoveFav(el.id);
+                  }}
                 />
               );
             }
