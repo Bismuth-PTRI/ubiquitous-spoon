@@ -10,6 +10,9 @@ import {
   ExpandAltOutlined,
   HeartFilled,
 } from '@ant-design/icons';
+
+import DietPrefs from './DietPrefs';
+import Intolerances from './Intolerances';
 // For the recipe card
 const { Meta } = Card;
 
@@ -57,6 +60,23 @@ const Homepage = (props) => {
   const [summary, setSummary] = useState('');
   const [sourceUrl, setSourceUrl] = useState('');
 
+  const [prefsList, setPrefsList] = useState('');
+  const [intoleranceList, setintoleranceList] = useState('');
+
+  const pushPrefs = (targetVal) => {
+    const dietsStr = targetVal.join(',').replace(/ /g, '').toLowerCase();
+    setPrefsList(dietsStr);
+  };
+
+  const updateIntolerances = (targetVal) => {
+    const intoleranceStr = targetVal.join(',').replace(/ /g, '').toLowerCase();
+    setintoleranceList(intoleranceStr);
+  };
+
+  useEffect(() => {
+    console.log('prefsList=====', prefsList);
+    console.log('intolerancesList=====', intoleranceList);
+  }, [prefsList, intoleranceList]);
   // /
   // Form's Functions
   // /
@@ -78,8 +98,8 @@ const Homepage = (props) => {
     // 2: recipes that minimize missing ingredients
     const ranking = shopping === 'Pre Shopping' ? 1 : 0;
 
-    const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredientsList}&number=10&ranking=${ranking}&apiKey=${apiKey}`;
-    // console.log('url', url);
+    const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredientsList}&number=10&ranking=${ranking}&apiKey=${apiKey}&diet=${prefsList}&intolerances=${intoleranceList}`;
+    console.log('url', url);
 
     // fetch request to spoonacular
     await fetch(url, {
@@ -263,6 +283,8 @@ const Homepage = (props) => {
               );
             }}
           </Form.List>
+          <DietPrefs prefsList={prefsList} pushPrefs={pushPrefs} />
+          <Intolerances intoleranceList={intoleranceList} updateIntolerances={updateIntolerances} />
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
