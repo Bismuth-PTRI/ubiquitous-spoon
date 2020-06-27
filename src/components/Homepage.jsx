@@ -10,6 +10,9 @@ import {
   ExpandAltOutlined,
   HeartFilled,
 } from '@ant-design/icons';
+
+import DietPrefs from './DietPrefs';
+import Intolerances from './Intolerances';
 // For the recipe card
 const { Meta } = Card;
 
@@ -57,6 +60,23 @@ const Homepage = (props) => {
   const [summary, setSummary] = useState('');
   const [sourceUrl, setSourceUrl] = useState('');
 
+  const [prefsList, setPrefsList] = useState('');
+  const [intoleranceList, setintoleranceList] = useState('');
+
+  const pushPrefs = (targetVal) => {
+    const dietsStr = targetVal.join(',').replace(/ /g, '').toLowerCase();
+    setPrefsList(dietsStr);
+  };
+
+  const updateIntolerances = (targetVal) => {
+    const intoleranceStr = targetVal.join(',').replace(/ /g, '').toLowerCase();
+    setintoleranceList(intoleranceStr);
+  };
+
+  useEffect(() => {
+    console.log('prefsList=====', prefsList);
+    console.log('intolerancesList=====', intoleranceList);
+  }, [prefsList, intoleranceList]);
   // /
   // Search Functions
   // /
@@ -112,6 +132,9 @@ const Homepage = (props) => {
     // 1: recipes that maximize used ingredients in the query
     // 2: recipes that minimize missing ingredients
     const ranking = shopping === 'Pre Shopping' ? 1 : 0;
+
+    const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredientsList}&number=10&ranking=${ranking}&apiKey=${apiKey}&diet=${prefsList}&intolerances=${intoleranceList}`;
+    console.log('url', url);
 
     // Get recipes
     let data = await getRecipesWithIngredients(ingredientsList, ranking, apiKey);
@@ -201,7 +224,7 @@ const Homepage = (props) => {
   // //////////
   // Removing favorites to user
   // //////////
-  const handleRemoveFav = recipeId => {
+  const handleRemoveFav = (recipeId) => {
     const data = { recipeId };
 
     // make a fetch request to backend to delete the recipe from user's favorites
@@ -365,6 +388,8 @@ const Homepage = (props) => {
               );
             }}
           </Form.List>
+          <DietPrefs prefsList={prefsList} pushPrefs={pushPrefs} />
+          <Intolerances intoleranceList={intoleranceList} updateIntolerances={updateIntolerances} />
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -397,7 +422,7 @@ const Homepage = (props) => {
                   key="favorite"
                   style={{ color: '#a294f6' }}
                   // onClick= removeFav!!!!!!!!!!!!!!
-                  onClick = {() => {
+                  onClick={() => {
                     handleRemoveFav(el.id);
                   }}
                 />
@@ -422,7 +447,10 @@ const Homepage = (props) => {
                 cover={<img alt="example" src={`${el.image}`} />}
                 actions={cardButtons}
               >
-                <Meta title={`${el.title}`} description={`Missing Ingredients: ${el.missedIngredients[0].name}`} />
+                <Meta
+                  title={`${el.title}`}
+                  description={`Missing Ingredients: ${el.missedIngredients[0].name}`}
+                />
               </Card>
             );
           })}
