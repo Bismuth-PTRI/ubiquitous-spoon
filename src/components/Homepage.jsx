@@ -10,6 +10,8 @@ import {
   ExpandAltOutlined,
   HeartFilled,
 } from '@ant-design/icons';
+import auth from '../utlis/auth';
+
 // For the recipe card
 const { Meta } = Card;
 
@@ -238,6 +240,7 @@ const Homepage = (props) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: auth.createAuthHeader(),
       },
       body: JSON.stringify(data),
     })
@@ -390,7 +393,10 @@ const Homepage = (props) => {
                 cover={<img alt="example" src={`${el.image}`} />}
                 actions={cardButtons}
               >
-                <Meta title={`${el.title}`} description={`Missing Ingredients: ${el.missedIngredients[0].name}`} />
+                <Meta
+                  title={`${el.title}`}
+                  description={`Missing Ingredients: ${el.missedIngredients[0].name}`}
+                />
               </Card>
             );
           })}
