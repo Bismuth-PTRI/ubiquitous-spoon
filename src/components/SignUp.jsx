@@ -49,10 +49,10 @@ const SignUp = (props) => {
   const [notice, setNotice] = useState('');
   const [form] = Form.useForm();
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     // console.log('Received values of form: ', values);
 
-    //["gluten free", "vegetarian", "vegan"]
+    // ["gluten free", "vegetarian", "vegan"]
     const glutenFree = values['checkbox-group'] ? values['checkbox-group'].includes('gluten free') : false;
     const vegetarian = values['checkbox-group'] ? values['checkbox-group'].includes('vegetarian') : false;
     const vegan = values['checkbox-group'] ? values['checkbox-group'].includes('vegan') : false;
@@ -71,7 +71,7 @@ const SignUp = (props) => {
     const userCheck = this;
 
     // fetch request to create a user
-    fetch('/api/signup', {
+    const response = await fetch('/api/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -80,22 +80,28 @@ const SignUp = (props) => {
     })
       .then((res) => res.json())
       .then((resData) => {
-        if (resData.err === 'Username already exists') {
-          // display the error as a notice in state
-          setNotice(resData.err);
-          form.setFieldsValue({ username: '' });
-        } else if (resData.success) {
-          // change redirect in local state to true
-          props.setUsername(resData.username);
-          setRedirect(true);
-        }
+        return resData;
       })
       .catch((err) => {
+        // display the error as a notice in state
+        setNotice('Error with sign up attempt');
         console.log(err);
       });
+
+    if (response.err === 'Username already exists') {
+      // display the error as a notice in state
+      setNotice(response.err);
+      form.setFieldsValue({ username: '' });
+    } else if (response.success) {
+      // change redirect in local state to true
+      props.setUsername(response.username);
+
+      localStorage.setItem('token', response.token);
+      setRedirect(true);
+    }
   };
 
-  //Redirect upon successful sign up
+  // Redirect upon successful sign up
   if (redirect) {
     return <Redirect to="/" />;
   }
