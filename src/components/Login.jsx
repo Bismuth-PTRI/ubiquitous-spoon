@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import { PageHeader, Form, Input, Row, Col, Button, Alert } from 'antd';
 import { connect } from 'react-redux';
 import * as actions from '../actions/actions';
+import auth from '../utlis/auth';
 
 const formItemLayout = {
   labelCol: {
@@ -48,14 +49,14 @@ const Login = (props) => {
   const [notice, setNotice] = useState('');
   const [form] = Form.useForm();
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     const data = {
       username: values.username,
       password: values.password,
     };
 
     // fetch request to login a user
-    fetch('/api/login', {
+    const response = await fetch('/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -64,20 +65,37 @@ const Login = (props) => {
     })
       .then((res) => res.json())
       .then((resData) => {
-        if (!resData.success) {
-          // display the error as a notice in state
-          setNotice(resData.err);
-          form.setFieldsValue({ username: '', password: '' });
-        } else if (resData.success) {
-          // change redirect in local state to true
-          console.log('resData.username', resData.username);
-          props.setUsername(resData.username);
-          setRedirect('/');
-        }
+        // if (!resData.success) {
+        //   // display the error as a notice in state
+        //   setNotice(resData.err);
+        //   form.setFieldsValue({ username: '', password: '' });
+        // } else if (resData.success) {
+        //   // change redirect in local state to true
+        //   console.log('resData.username', resData.username);
+        //   props.setUsername(resData.username);
+        //   setRedirect('/');
+        // }
+        return resData;
       })
       .catch((err) => {
-        console.log(err);
+        console.log('login fetch failed', err);
+        return err;
       });
+
+    if (!response.success) {
+      // display the error as a notice in state
+      setNotice(response.err);
+      form.setFieldsValue({ username: '', password: '' });
+    } else if (response.success) {
+      // change redirect in local state to true
+
+      // Post Login Actions
+      props.setUsername(response.username);
+      localStorage.setItem('token', response.token);
+      // Set Timer function here!!!
+      auth.silentRefreshTimer(response.token_expiry, response.username);
+      setRedirect('/');
+    }
   };
 
   // redirect if redirect is populated
@@ -98,7 +116,9 @@ const Login = (props) => {
         // scrollToFirstError
       >
         {/* conditionally render the alert if an error notice has occured */}
-        {notice && <Alert style={{ marginBottom: 24 }} message={notice} type="error" showIcon closable />}
+        {notice && (
+          <Alert style={{ marginBottom: 24 }} message={notice} type="error" showIcon closable />
+        )}
 
         <Form.Item
           name="username"
