@@ -103,6 +103,10 @@ jwtController.verifyJWT = (req, res, next) => {
         message: 'Auth token is not supplied',
       });
     }
+  } else {
+    // Need this for all other requests to work until Auth headers are added to all request.
+    // Otherwise the request from the browser stays pending
+    next();
   }
 };
 
@@ -127,7 +131,15 @@ jwtController.refreshToken = async (req, res, next) => {
     // verify refresh_token against DB refresh Token
     if (cookieToken === response.rows[response.rows.length - 1].refresh_token) {
       console.log(`Refresh Token Verified`.brightGreen);
-      return next();
+
+      // Delete refresh token to make room for the new refreshToken which will be created in createJWT
+      const text = `DELETE FROM refresh WHERE refresh_token = '${cookieToken}'`;
+      pool.query(text, (err, response) => {
+        if (err) {
+          return next(err);
+        }
+        return next();
+      });
     }
   });
 };
