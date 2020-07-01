@@ -63,7 +63,13 @@ const Homepage = (props) => {
   // Search Functions
   // /
   const getFavsForUser = (username) => {
-    return fetch(`/api/favorites/${username}`)
+    return fetch(`/api/favorites/${username}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: auth.createAuthHeader(),
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         // Store the recipes in state
