@@ -7,6 +7,16 @@ auth.createAuthHeader = () => {
 };
 
 auth.logout = (props) => {
+  const url = '/api/logout';
+
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: auth.createAuthHeader(),
+    },
+  }).catch((err) => console.log('Error from the request to Logout'));
+
   localStorage.setItem('token', '');
   props.clearUser();
 };
