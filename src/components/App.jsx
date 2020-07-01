@@ -12,6 +12,7 @@ import Profile from './Profile';
 import Homepage from './Homepage';
 import Login from './Login';
 import Favorites from './Favorites';
+import FindFriends from './FindFriends';
 
 const { Header, Content, Footer } = Layout;
 
@@ -53,6 +54,12 @@ const App = () => {
           <Route path="/favorites">
             <Content>
               <Favorites />
+            </Content>
+          </Route>
+
+          <Route path="/findfriends">
+            <Content>
+              <FindFriends />
             </Content>
           </Route>
         </Switch>
