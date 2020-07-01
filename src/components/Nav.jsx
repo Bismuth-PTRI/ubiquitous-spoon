@@ -22,7 +22,7 @@ const Nav = (props) => {
       <div>
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
           <Menu.Item key="1">
-            <Link to="/">Home</Link>
+            <Link to="/">Search Recipes</Link>
           </Menu.Item>
           {props.username && (
             <Menu.Item key="2">
@@ -32,6 +32,11 @@ const Nav = (props) => {
           {props.username && (
             <Menu.Item key="3">
               <Link to="/favorites">Saved Recipes</Link>
+            </Menu.Item>
+          )}
+          {props.username && (
+            <Menu.Item key="4">
+              <Link to="/findfriends">Find Friends</Link>
             </Menu.Item>
           )}
           {!props.username && (
