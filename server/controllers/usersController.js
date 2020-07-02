@@ -23,7 +23,7 @@ usersController.checkUsername = (req, res, next) => {
 
 usersController.checkLogin = (req, res, next) => {
   const user = req.body.username.toLowerCase();
-  const {password} = req.body;
+  const { password } = req.body;
   let bcryptPassword;
 
   // Query database using user input (username & password)
@@ -49,24 +49,25 @@ usersController.checkLogin = (req, res, next) => {
       if (!isMatch) {
         // If they don't match, return error "Wrong Password"
         return next({ log: 'checkLogin', message: { err: 'Wrong password' } });
-      } if (err) {
+      }
+      if (err) {
         return next(err);
-      } else {
+      } 
         res.locals.username = req.body.username;
         console.log('gluten free? ', res.locals.glutenFree);
         next();
-      }
+      
     });
   });
 };
 
 usersController.logout = (req, res, next) => {
   // Get the session ID cookie from the browser
-  const sessionId = req.cookies.ssid;
+  const refreshToken = req.cookies.refresh;
   // Clear session cookie from browser
-  res.clearCookie('ssid');
+  res.clearCookie('refresh');
   // Delete session from session table in DB
-  const text = `DELETE FROM sessions WHERE id = '${sessionId}'`;
+  const text = `DELETE FROM refresh WHERE refresh_token = '${refreshToken}'`;
   pool.query(text, (err, response) => {
     if (err) {
       return next(err);
@@ -74,6 +75,7 @@ usersController.logout = (req, res, next) => {
     next();
   });
 };
+
 // Check to make sure passwords match, then encrypt
 usersController.checkPassword = (req, res, next) => {
   const { password1, password2 } = req.body;
@@ -118,7 +120,7 @@ usersController.createSession = (req, res, next) => {
 
 usersController.getUserInfo = (req, res, next) => {
   // get username from request body
-  const {username} = req.body;
+  const { username } = req.body;
 
   // get fields (except password) from database for that user
   const text = `SELECT username, name, email, vegan, vegetarian, gluten_free FROM users WHERE username = '${username}'`;
@@ -133,12 +135,12 @@ usersController.getUserInfo = (req, res, next) => {
 
 usersController.updateUserInfo = (req, res, next) => {
   // Get info from request
-  const {username} = req.body;
-    const name = req.body.name;
-    const email = req.body.email;
-    const glutenFree = req.body.glutenFree;
-    const vegan = req.body.vegan;
-    const {vegetarian} = req.body;
+  const { username } = req.body;
+  const {name} = req.body;
+  const {email} = req.body;
+  const {glutenFree} = req.body;
+  const {vegan} = req.body;
+  const { vegetarian } = req.body;
 
   // Update info in database
   const text = `UPDATE users SET name = '${name}', email = '${email}', gluten_free = '${glutenFree}', vegan = '${vegan}', vegetarian = '${vegetarian}' WHERE username = '${username}'`;
