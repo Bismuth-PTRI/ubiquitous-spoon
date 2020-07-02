@@ -65,16 +65,6 @@ const Login = (props) => {
     })
       .then((res) => res.json())
       .then((resData) => {
-        // if (!resData.success) {
-        //   // display the error as a notice in state
-        //   setNotice(resData.err);
-        //   form.setFieldsValue({ username: '', password: '' });
-        // } else if (resData.success) {
-        //   // change redirect in local state to true
-        //   console.log('resData.username', resData.username);
-        //   props.setUsername(resData.username);
-        //   setRedirect('/');
-        // }
         return resData;
       })
       .catch((err) => {
