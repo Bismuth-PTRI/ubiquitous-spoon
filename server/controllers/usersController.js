@@ -1,6 +1,6 @@
-const pool = require('../models/usersModel');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
+const pool = require('../models/usersModel');
 
 const usersController = {};
 
@@ -23,7 +23,7 @@ usersController.checkUsername = (req, res, next) => {
 
 usersController.checkLogin = (req, res, next) => {
   const user = req.body.username.toLowerCase();
-  const password = req.body.password;
+  const {password} = req.body;
   let bcryptPassword;
 
   // Query database using user input (username & password)
@@ -49,7 +49,7 @@ usersController.checkLogin = (req, res, next) => {
       if (!isMatch) {
         // If they don't match, return error "Wrong Password"
         return next({ log: 'checkLogin', message: { err: 'Wrong password' } });
-      } else if (err) {
+      } if (err) {
         return next(err);
       } else {
         res.locals.username = req.body.username;
@@ -118,7 +118,7 @@ usersController.createSession = (req, res, next) => {
 
 usersController.getUserInfo = (req, res, next) => {
   // get username from request body
-  const username = req.body.username;
+  const {username} = req.body;
 
   // get fields (except password) from database for that user
   const text = `SELECT username, name, email, vegan, vegetarian, gluten_free FROM users WHERE username = '${username}'`;
@@ -133,12 +133,12 @@ usersController.getUserInfo = (req, res, next) => {
 
 usersController.updateUserInfo = (req, res, next) => {
   // Get info from request
-  const username = req.body.username,
-    name = req.body.name,
-    email = req.body.email,
-    glutenFree = req.body.glutenFree,
-    vegan = req.body.vegan,
-    vegetarian = req.body.vegetarian;
+  const {username} = req.body;
+    const name = req.body.name;
+    const email = req.body.email;
+    const glutenFree = req.body.glutenFree;
+    const vegan = req.body.vegan;
+    const {vegetarian} = req.body;
 
   // Update info in database
   const text = `UPDATE users SET name = '${name}', email = '${email}', gluten_free = '${glutenFree}', vegan = '${vegan}', vegetarian = '${vegetarian}' WHERE username = '${username}'`;

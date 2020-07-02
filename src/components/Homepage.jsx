@@ -11,8 +11,10 @@ import {
   HeartFilled,
 } from '@ant-design/icons';
 
+import auth from '../utlis/auth';
 import DietPrefs from './DietPrefs';
 import Intolerances from './Intolerances';
+
 // For the recipe card
 const { Meta } = Card;
 
@@ -290,6 +292,7 @@ const Homepage = (props) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: auth.createAuthHeader(),
       },
       body: JSON.stringify(data),
     })

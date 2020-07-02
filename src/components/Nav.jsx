@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import * as actions from '../actions/actions';
+import auth from '../utlis/auth';
 
 const mapStateToProps = (state) => ({
   username: state.user.username,
@@ -13,24 +14,7 @@ const mapDispatchToProps = {
 };
 
 const Nav = (props) => {
-  const logout = () => {
-    fetch('/api/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          props.clearUser();
-        } else {
-          console.log('logout is returning a request but does not have 200 code');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  const logout = () => auth.logout(props);
 
   return (
     <>
