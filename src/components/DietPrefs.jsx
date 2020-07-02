@@ -10,8 +10,15 @@ import { Form, Checkbox } from 'antd';
 // Ketogenic
 
 const DietPrefs = ({ prefsList, pushPrefs }) => {
-  const [checkOptions] = useState(['Gluten Free', 'Vegan', 'Vegetarian', 'Pescetarian', 'Paleo', 'Ketogenic', 'Whole30']);
-
+  const [checkOptions] = useState([
+    'Gluten Free',
+    'Vegan',
+    'Vegetarian',
+    'Pescetarian',
+    'Paleo',
+    'Ketogenic',
+    'Whole30',
+  ]);
   return (
     <div>
       <Form.Item name="checkbox-group" label="Food Preferences">
