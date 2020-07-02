@@ -52,11 +52,10 @@ usersController.checkLogin = (req, res, next) => {
       }
       if (err) {
         return next(err);
-      } 
-        res.locals.username = req.body.username;
-        console.log('gluten free? ', res.locals.glutenFree);
-        next();
-      
+      }
+      res.locals.username = req.body.username;
+      console.log('gluten free? ', res.locals.glutenFree);
+      next();
     });
   });
 };
@@ -66,7 +65,7 @@ usersController.logout = (req, res, next) => {
   const refreshToken = req.cookies.refresh;
   // Clear session cookie from browser
   res.clearCookie('refresh');
-  // Delete session from session table in DB
+  // Delete refreshToken from refresh table in DB
   const text = `DELETE FROM refresh WHERE refresh_token = '${refreshToken}'`;
   pool.query(text, (err, response) => {
     if (err) {
@@ -136,10 +135,10 @@ usersController.getUserInfo = (req, res, next) => {
 usersController.updateUserInfo = (req, res, next) => {
   // Get info from request
   const { username } = req.body;
-  const {name} = req.body;
-  const {email} = req.body;
-  const {glutenFree} = req.body;
-  const {vegan} = req.body;
+  const { name } = req.body;
+  const { email } = req.body;
+  const { glutenFree } = req.body;
+  const { vegan } = req.body;
   const { vegetarian } = req.body;
 
   // Update info in database
