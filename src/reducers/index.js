@@ -13,11 +13,13 @@ import { combineReducers } from 'redux';
 
 // import all reducers here
 import userReducer from './userReducer';
+import foodReducer from './foodReducer';
 
 // combine reducers
 const reducers = combineReducers({
   // if we had other reducers, they would go here
   user: userReducer,
+  food: foodReducer,
 });
 
 // make the combined reducers available for import

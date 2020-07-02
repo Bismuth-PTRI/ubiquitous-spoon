@@ -21,7 +21,31 @@ export const clearUser = () => ({
   type: types.CLEAR_USER,
 });
 
-export const setUserPrefs = (userPrefs) => ({
+export const setUserInfo = (userInfo) => ({
+  type: types.SET_USERINFO,
+  payload: userInfo,
+});
+
+export const setUserPrefs = (prefs) => ({
   type: types.SET_USERPREFS,
-  payload: userPrefs,
+  payload: prefs,
+});
+
+export const signUpUser = () => ({
+  type: types.SIGNUP_USER,
+});
+
+export const setUserPreference = (foodPrefs) => ({
+  type: types.SET_USERPREFERENCE,
+  payload: foodPrefs,
+});
+
+export const loadIntolerances = (preftype) => ({
+  type: types.LOAD_INTOLERANCES,
+  payload: preftype,
+});
+
+export const loadDietpreference = (preftype) => ({
+  type: types.LOAD_DIETPREFERENCE,
+  payload: preftype,
 });
