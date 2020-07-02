@@ -15,7 +15,6 @@ jwtController.createJWT = async (req, res, next) => {
   //
   // Expries in 2 mins
   const expireTime = Math.floor(Date.now() / 1000) + 60 * 10;
-  // const expireTime = Math.floor(Date.now() / 1000) + 15;
 
   // create the token
   const token = jwt.sign(
