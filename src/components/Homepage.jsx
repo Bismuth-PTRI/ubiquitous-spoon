@@ -10,7 +10,10 @@ import {
   ExpandAltOutlined,
   HeartFilled,
 } from '@ant-design/icons';
+
 import auth from '../utlis/auth';
+import DietPrefs from './DietPrefs';
+import Intolerances from './Intolerances';
 
 // For the recipe card
 const { Meta } = Card;
@@ -59,6 +62,23 @@ const Homepage = (props) => {
   const [summary, setSummary] = useState('');
   const [sourceUrl, setSourceUrl] = useState('');
 
+  const [prefsList, setPrefsList] = useState('');
+  const [intoleranceList, setintoleranceList] = useState('');
+
+  const pushPrefs = (targetVal) => {
+    const dietsStr = targetVal.join(',').replace(/ /g, '').toLowerCase();
+    setPrefsList(dietsStr);
+  };
+
+  const updateIntolerances = (targetVal) => {
+    const intoleranceStr = targetVal.join(',').replace(/ /g, '').toLowerCase();
+    setintoleranceList(intoleranceStr);
+  };
+
+  useEffect(() => {
+    console.log('prefsList=====', prefsList);
+    console.log('intolerancesList=====', intoleranceList);
+  }, [prefsList, intoleranceList]);
   // /
   // Search Functions
   // /
@@ -114,6 +134,9 @@ const Homepage = (props) => {
     // 1: recipes that maximize used ingredients in the query
     // 2: recipes that minimize missing ingredients
     const ranking = shopping === 'Pre Shopping' ? 1 : 0;
+
+    const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredientsList}&number=10&ranking=${ranking}&apiKey=${apiKey}&diet=${prefsList}&intolerances=${intoleranceList}`;
+    console.log('url', url);
 
     // Get recipes
     let data = await getRecipesWithIngredients(ingredientsList, ranking, apiKey);
@@ -175,7 +198,6 @@ const Homepage = (props) => {
 
     // Get more info from Spoonacular
     const data = await getRecipeById(id);
-    console.log('data in expand details', data);
 
     // update state with new data from Spoonacular
     data.glutenFree ? setGlutenFree('Yes') : setGlutenFree('No');
@@ -198,8 +220,38 @@ const Homepage = (props) => {
   };
 
   const handleCloseModal = () => {
-    console.log('in handleCloseModal');
     setModal(false);
+  };
+
+  // //////////
+  // Removing favorites to user
+  // //////////
+  const handleRemoveFav = (recipeId) => {
+    const data = { recipeId };
+
+    // make a fetch request to backend to delete the recipe from user's favorites
+    fetch(`/api/favorites/${props.username}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success) console.log('successfully removed favorite');
+      })
+      .catch((err) => console.log(err));
+
+    // Once favorite has been deleted from the DB, remove it from the favs array in state
+    const newRecipesList = recipes.map((el) => {
+      if (el.id === recipeId) {
+        el.favorite = false;
+      }
+      return el;
+    });
+
+    setRecipes(newRecipesList);
   };
 
   // //////////
@@ -339,6 +391,8 @@ const Homepage = (props) => {
               );
             }}
           </Form.List>
+          <DietPrefs prefsList={prefsList} pushPrefs={pushPrefs} />
+          <Intolerances intoleranceList={intoleranceList} updateIntolerances={updateIntolerances} />
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -371,6 +425,9 @@ const Homepage = (props) => {
                   key="favorite"
                   style={{ color: '#a294f6' }}
                   // onClick= removeFav!!!!!!!!!!!!!!
+                  onClick={() => {
+                    handleRemoveFav(el.id);
+                  }}
                 />
               );
             }
