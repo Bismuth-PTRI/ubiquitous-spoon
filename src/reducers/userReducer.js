@@ -20,6 +20,7 @@ const initialState = {
   vegetarian: null,
   userInfo: {},
   foodPrefrence: {},
+  signUpState: '',
 };
 
 const userReducer = (state = initialState, action) => {
@@ -63,7 +64,7 @@ const userReducer = (state = initialState, action) => {
           ...foodPrefrence,
           [Object.keys(action.payload || { diet: [] })[0]]: Object.values(
             action.payload || { diet: [] }
-          ),
+          )[0],
         },
       };
     case types.SET_USERINFO:
@@ -72,10 +73,16 @@ const userReducer = (state = initialState, action) => {
         userInfo: action.payload,
       };
     case types.SIGNUP_USER:
-      console.log('Go SignUp User ');
-      console.log('User Info Details :: ', state.userInfo);
-      console.log('User Preference Details :: ', state.foodPrefrence);
-      return state;
+      return {
+        ...state,
+        username: state.userInfo.username,
+        fullName: state.userInfo.name,
+        email: state.userInfo.email,
+        signUpState:
+          action.payload.status === 'success'
+            ? 'success'
+            : `${action.payload.status}: ${action.payload.message}`,
+      };
     default:
       return state;
   }
