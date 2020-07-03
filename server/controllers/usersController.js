@@ -151,4 +151,20 @@ usersController.updateUserInfo = (req, res, next) => {
   });
 };
 
+usersController.findFriends = async (req, res, next) => {
+  // select all users in the DB (for now.. should be optimized "later")
+  const text = `SELECT username, name FROM users`;
+
+  // await response for all the users from the DB
+  await pool.query(text, (err, response) => {
+    if (err) {
+      return next(err);
+    }
+
+    res.locals.users = response.rows;
+
+    return next();
+  });
+};
+
 module.exports = usersController;
