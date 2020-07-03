@@ -1,11 +1,8 @@
 import React from 'react';
 import { Form } from 'antd';
-// import { connect } from 'react-redux';
 
 import Intolerances from './Intolerances';
 import DietPrefs from './DietPrefs';
-
-// const mapStateToProps = {};
 
 const FoodPreferences = (props) => {
   const setTolerances = (e) => {
@@ -17,9 +14,9 @@ const FoodPreferences = (props) => {
   return (
     <Form>
       <Form.Item>
-        <Intolerances updateIntolerances={setTolerances}></Intolerances>
+        <Intolerances updateIntolerances={setTolerances} {...props.intolerance}></Intolerances>
         <br></br>
-        <DietPrefs pushPrefs={setPrefs}></DietPrefs>
+        <DietPrefs pushPrefs={setPrefs} {...props.diet}></DietPrefs>
       </Form.Item>
     </Form>
   );
