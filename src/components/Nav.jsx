@@ -39,13 +39,19 @@ const Nav = (props) => {
               <Link to="/findfriends">Find Friends</Link>
             </Menu.Item>
           )}
+          {//props.username && (
+            <Menu.Item key="8">
+              <Link to="/user">Profile</Link>
+            </Menu.Item>
+          //)
+          }
           {!props.username && (
             <Menu.Item style={{ float: 'right' }} key="5">
               <Link to="/login">Login</Link>
             </Menu.Item>
           )}
           {!props.username && (
-            <Menu.Item style={{ float: 'right' }} key="4">
+            <Menu.Item style={{ float: 'right' }} key="9">
               <Link to="/signup">Signup</Link>
             </Menu.Item>
           )}
