@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/mdigel/ubiquitous-spoon#readme",
   "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.10.4",
     "antd": "^4.3.3",
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",

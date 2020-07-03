@@ -7,7 +7,6 @@ const usersController = {};
 // Middleware to check validity of username
 usersController.checkUsername = (req, res, next) => {
   const user = req.body.username.toLowerCase();
-
   const text = `SELECT * FROM users WHERE username = '${user}'`;
   pool.query(text, (err, response) => {
     if (err) {
