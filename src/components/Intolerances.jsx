@@ -16,21 +16,8 @@ import { Form, Checkbox } from 'antd';
 // Tree Nut
 // Wheat
 
-const Intolerances = ({ intoleranceList, updateIntolerances }) => {
-  const [intoleranceOptions] = useState([
-    'Dairy',
-    'Egg',
-    // 'Gluten',
-    // 'Grain',
-    'Peanut',
-    'Seafood',
-    'Sesame',
-    'Shellfish',
-    'Soy',
-    'Sulfite',
-    'Tree Nut',
-    // 'Wheat',
-  ]);
+const Intolerances = ({ intoleranceList, updateIntolerances, ...props }) => {
+  const [intoleranceOptions] = useState(Object.values(props).map((m) => m.value));
 
   return (
     <div>
