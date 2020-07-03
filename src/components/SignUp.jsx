@@ -48,18 +48,12 @@ const tailFormItemLayout = {
   },
 };
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state) => ({
+  signupstate: state.user.signUpState,
+});
 
-const mapDispatchToProps = () => ({});
-
-// const mapDispatchToProps = (dispatch) => ({
-//   setUsername: (username) => {
-//     dispatch(actions.setUsername(username));
-//   },
-// });
-
-const SignUp = ({ ...props }, ref) => {
-  const [notice, setNotice] = useState('');
+const SignUp = (props) => {
+  const [notice, setNotice] = useState(props.signupstate ? props.signupstate.split(':')[1] : '');
   const [uname, setUname] = useState('');
   const [pwd1, setPwd1] = useState('');
   const [pwd2, setPwd2] = useState('');
@@ -76,6 +70,7 @@ const SignUp = ({ ...props }, ref) => {
       email: email,
     };
     props.updateInfo(data);
+    setTimeout(() => setNotice(''), 5000);
   }, [uname, name, email, pwd1, pwd2]);
 
   return (
@@ -191,39 +186,9 @@ const SignUp = ({ ...props }, ref) => {
         >
           <Input onChange={(e) => setName(e.target.value)} />
         </Form.Item>
-
-        {/* <Form.Item name="checkbox-group" label="Food Preferences">
-          <Checkbox.Group>
-            <Row>
-              <Col span={24}>
-                <Checkbox value="gluten free" style={{ lineHeight: '32px' }}>
-                  Gluten Free
-                </Checkbox>
-              </Col>
-              <Col span={24}>
-                <Checkbox value="vegan" style={{ lineHeight: '32px' }}>
-                  Vegan
-                </Checkbox>
-              </Col>
-              <Col span={24}>
-                <Checkbox value="vegetarian" style={{ lineHeight: '32px' }}>
-                  Vegetarian
-                </Checkbox>
-              </Col>
-            </Row>
-          </Checkbox.Group>
-        </Form.Item> */}
-
-        {/* <Form.Item {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">
-            Sign Up
-          </Button>
-        </Form.Item> */}
       </Form>
     </div>
   );
 };
 
-// export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
-
-export default SignUp;
+export default connect(mapStateToProps, null)(SignUp);

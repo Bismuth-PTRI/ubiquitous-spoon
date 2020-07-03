@@ -6,6 +6,7 @@ import { Steps, Button } from 'antd';
 import FoodPreferences from './Preference';
 import SignUp from './signup';
 import * as actions from '../actions/actions';
+import * as api from '../api/common';
 
 const Step = Steps.Step;
 
@@ -15,6 +16,7 @@ const mapStateToProps = (state) => {
     intolerance: state.food.intolerances,
     userinfo: state.user.userInfo,
     foodPrefrence: state.user.foodPrefrence,
+    signupstate: state.user.signUpState,
   };
 };
 
@@ -28,9 +30,7 @@ const mapDispatchToProps = (dispatch) => ({
   updateUserPreferences: async (pref) => {
     await dispatch(actions.setUserPreference(pref));
   },
-  signupUser: async () => {
-    await dispatch(actions.signUpUser());
-  },
+  signupUser: async (rsp) => await dispatch(actions.signUpUser(rsp)),
 });
 
 class SignupWizard extends React.Component {
@@ -38,6 +38,7 @@ class SignupWizard extends React.Component {
     super(props);
     this.state = {
       current: 0,
+      toMain: false,
     };
     this.onFinish = this.onFinish.bind(this);
     this.steps = [
@@ -47,7 +48,13 @@ class SignupWizard extends React.Component {
       },
       {
         title: 'Preferences',
-        content: <FoodPreferences updatePreference={this.saveprefs.bind(this)}></FoodPreferences>,
+        content: (
+          <FoodPreferences
+            updatePreference={this.saveprefs.bind(this)}
+            intolerance={this.props.intolerance}
+            diet={this.props.diet}
+          ></FoodPreferences>
+        ),
       },
     ];
   }
@@ -70,56 +77,26 @@ class SignupWizard extends React.Component {
     this.setState({ current });
   }
 
-  redirect(state) {
-    if (state) {
-      //Redirect upon successful sign up
-      return <Redirect to="/" />;
-    }
+  stateReset() {
+    this.setState({ current: 0 });
   }
 
   async onFinish() {
-    console.log('Received values of form: ', this.props);
-    const signupResponse = await this.props.signupUser();
-    //   const data = {
-    //     username: values.username,
-    //     password1: values.password,
-    //     password2: values.confirm,
-    //     name: values.name,
-    //     email: values.email,
-    //     glutenFree,
-    //     vegetarian,
-    //     vegan,
-    //   };
-
-    //   const userCheck = this;
-
-    //   // fetch request to create a user
-    //   fetch('/api/signup', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(data),
-    //   })
-    //     .then((res) => res.json())
-    //     .then((resData) => {
-    //       if (resData.err === 'Username already exists') {
-    //         // display the error as a notice in state
-    //         setNotice(resData.err);
-    //         form.setFieldsValue({ username: '' });
-    //       } else if (resData.success) {
-    //         // change redirect in local state to true
-    //         props.setUsername(resData.username);
-    //         setRedirect(true);
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
+    const rsp = await api.signupUserApi(this.props.userinfo, this.props.foodPrefrence);
+    this.props.signupUser(rsp);
+    if (rsp.status === 'success') {
+      this.setState({ toMain: true });
+    } else {
+      this.setState({ current: 0 });
+    }
   }
 
   render() {
-    const { current } = this.state;
+    const { current, toMain } = this.state;
+    if (toMain) {
+      return <Redirect to={'/'} />;
+    }
+
     return (
       <div>
         <Steps current={current}>
@@ -135,7 +112,12 @@ class SignupWizard extends React.Component {
             </Button>
           )}
           {current === this.steps.length - 1 && (
-            <Button type="primary" onClick={this.onFinish}>
+            <Button
+              type="primary"
+              onClick={() => {
+                this.onFinish();
+              }}
+            >
               Sign Up
             </Button>
           )}
