@@ -1,13 +1,14 @@
-const pool = require('../models/usersModel');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
+const pool = require('../models/usersModel');
 
 const usersController = {};
 
 // Middleware to check validity of username
 usersController.checkUsername = (req, res, next) => {
   const user = req.body.username.toLowerCase();
-  const text = `SELECT * FROM ubiquitous_spoon.users WHERE username = '${user}'`;
+
+  const text = `SELECT * FROM users WHERE username = '${user}'`;
   pool.query(text, (err, response) => {
     if (err) {
       return next(err);
@@ -22,11 +23,11 @@ usersController.checkUsername = (req, res, next) => {
 
 usersController.checkLogin = (req, res, next) => {
   const user = req.body.username.toLowerCase();
-  const password = req.body.password;
+  const {password} = req.body;
   let bcryptPassword;
 
   // Query database using user input (username & password)
-  const text = `SELECT * FROM ubiquitous_spoon.users WHERE username = '${user}'`;
+  const text = `SELECT * FROM users WHERE username = '${user}'`;
   pool.query(text, (err, response) => {
     if (err) {
       return next(err);
@@ -48,7 +49,7 @@ usersController.checkLogin = (req, res, next) => {
       if (!isMatch) {
         // If they don't match, return error "Wrong Password"
         return next({ log: 'checkLogin', message: { err: 'Wrong password' } });
-      } else if (err) {
+      } if (err) {
         return next(err);
       } else {
         res.locals.username = req.body.username;
@@ -65,7 +66,7 @@ usersController.logout = (req, res, next) => {
   // Clear session cookie from browser
   res.clearCookie('ssid');
   // Delete session from session table in DB
-  const text = `DELETE FROM ubiquitous_spoon.sessions WHERE id = '${sessionId}'`;
+  const text = `DELETE FROM sessions WHERE id = '${sessionId}'`;
   pool.query(text, (err, response) => {
     if (err) {
       return next(err);
@@ -91,11 +92,11 @@ usersController.checkPassword = (req, res, next) => {
 
 // If username and password look good, add new user to database
 usersController.addUser = (req, res, next) => {
-  const text = `INSERT INTO ubiquitous_spoon.users (username, password, name, email, vegan, vegetarian, gluten_free)
+  const text = `INSERT INTO users (username, password, name, email, vegan, vegetarian, gluten_free)
   VALUES('${req.body.username}', '${res.locals.password}', '${req.body.name}', '${req.body.email}', '${req.body.vegan}', '${req.body.vegetarian}', '${req.body.glutenFree}');`;
   pool.query(text, (err, response) => {
     if (err) {
-      return next({ log: 'addUser', message: { err: 'Error in addUser' } });
+      return next({ log: 'addUser', message: { err: 'HERE: Error in addUser' } });
     }
     res.locals.username = req.body.username;
     next();
@@ -105,7 +106,7 @@ usersController.addUser = (req, res, next) => {
 // Insert new session into session table in db and set cookie
 usersController.createSession = (req, res, next) => {
   const ssid = uuidv4();
-  const text = `INSERT INTO ubiquitous_spoon.sessions (id, created_at) VALUES('${ssid}', current_timestamp);`;
+  const text = `INSERT INTO sessions (id, created_at) VALUES('${ssid}', current_timestamp);`;
   pool.query(text, (err, response) => {
     if (err) {
       return next({ log: 'createSession', message: { err: 'Error in createSession' } });
@@ -117,10 +118,10 @@ usersController.createSession = (req, res, next) => {
 
 usersController.getUserInfo = (req, res, next) => {
   // get username from request body
-  const username = req.body.username;
+  const {username} = req.body;
 
   // get fields (except password) from database for that user
-  const text = `SELECT username, name, email, vegan, vegetarian, gluten_free FROM ubiquitous_spoon.users WHERE username = '${username}'`;
+  const text = `SELECT username, name, email, vegan, vegetarian, gluten_free FROM users WHERE username = '${username}'`;
   pool.query(text, (err, response) => {
     if (err) {
       return next(err);
@@ -132,15 +133,15 @@ usersController.getUserInfo = (req, res, next) => {
 
 usersController.updateUserInfo = (req, res, next) => {
   // Get info from request
-  const username = req.body.username,
-    name = req.body.name,
-    email = req.body.email,
-    glutenFree = req.body.glutenFree,
-    vegan = req.body.vegan,
-    vegetarian = req.body.vegetarian;
+  const {username} = req.body;
+    const name = req.body.name;
+    const email = req.body.email;
+    const glutenFree = req.body.glutenFree;
+    const vegan = req.body.vegan;
+    const {vegetarian} = req.body;
 
   // Update info in database
-  const text = `UPDATE ubiquitous_spoon.users SET name = '${name}', email = '${email}', gluten_free = '${glutenFree}', vegan = '${vegan}', vegetarian = '${vegetarian}' WHERE username = '${username}'`;
+  const text = `UPDATE users SET name = '${name}', email = '${email}', gluten_free = '${glutenFree}', vegan = '${vegan}', vegetarian = '${vegetarian}' WHERE username = '${username}'`;
   pool.query(text, (err, response) => {
     if (err) {
       return next(err);
