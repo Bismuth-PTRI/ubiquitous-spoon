@@ -26,10 +26,15 @@ const initialState = {
 const foodReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.LOAD_DIETPREFERENCE:
-    //
+      return {
+        ...state,
+        diets: action.payload.success ? action.payload.diet : state.diets,
+      };
     case types.LOAD_INTOLERANCES:
-    //
-    //
+      return {
+        ...state,
+        intolerances: action.payload.success ? action.payload.intolerance : state.intolerances,
+      };
     default:
       return state;
   }
