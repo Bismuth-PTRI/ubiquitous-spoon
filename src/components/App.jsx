@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import '../../node_modules/antd/dist/antd.less';
 import '../style/theme.less';
 import '../App.css';
@@ -16,11 +17,40 @@ import Favorites from './Favorites';
 import FindFriends from './FindFriends';
 import PublicProfile from './PublicProfile';
 
+import { loadDietpreference, loadIntolerances } from '../actions/actions';
+import { loadPreferences } from '../api/common';
+
+// const mapStateToProps = (state) => {
+//   return {
+//     diet: state.food.diets,
+//     intolerance: state.food.intolerances,
+//   };
+// };
+
+const mapDispatchToProps = (dispatch) => ({
+  loaddiets: (payload) => dispatch(loadDietpreference(payload)),
+  loadintolernace: (payload) => dispatch(loadIntolerances(payload)),
+});
+
 const { Header, Content, Footer } = Layout;
 
-const App = () => {
+const App = (props) => {
   // more to come
-  console.log('hi!!');
+  React.useEffect(() => {
+    // implemet on component mount to grab all intial data
+    const LoadPreferences = async () => {
+      try {
+        const prfs_d = await loadPreferences('Diet');
+        await props.loaddiets(prfs_d);
+      } catch (err) {}
+      try {
+        const prfs_i = await loadPreferences('Intolerance');
+        await props.loadintolernace(prfs_i);
+      } catch (err) {}
+    };
+    LoadPreferences();
+  }, []);
+
   return (
     <Router>
       <Layout className="layout">
@@ -82,4 +112,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default connect(null, mapDispatchToProps)(App);
