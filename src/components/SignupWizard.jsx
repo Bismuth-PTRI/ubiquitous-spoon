@@ -48,13 +48,7 @@ class SignupWizard extends React.Component {
       },
       {
         title: 'Preferences',
-        content: (
-          <FoodPreferences
-            updatePreference={this.saveprefs.bind(this)}
-            intolerance={this.props.intolerance}
-            diet={this.props.diet}
-          ></FoodPreferences>
-        ),
+        content: <FoodPreferences updatePreference={this.saveprefs.bind(this)}></FoodPreferences>,
       },
     ];
   }
@@ -82,7 +76,12 @@ class SignupWizard extends React.Component {
   }
 
   async onFinish() {
-    const rsp = await api.signupUserApi(this.props.userinfo, this.props.foodPrefrence);
+    const prefs = {};
+    prefs.diet = api.identifyPreferences(this.props.diet, [...this.props.foodPrefrence.diet]);
+    prefs.intolerance = api.identifyPreferences(this.props.intolerance, [
+      ...this.props.foodPrefrence.intolerance,
+    ]);
+    const rsp = await api.signupUserApi(this.props.userinfo, prefs);
     this.props.signupUser(rsp);
     if (rsp.status === 'success') {
       this.setState({ toMain: true });
