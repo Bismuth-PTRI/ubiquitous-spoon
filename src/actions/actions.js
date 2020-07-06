@@ -42,12 +42,12 @@ export const setUserPreference = (foodPrefs) => ({
   payload: foodPrefs,
 });
 
-export const loadIntolerances = (preftype) => ({
+export const loadIntolerances = (prf) => ({
   type: types.LOAD_INTOLERANCES,
-  payload: preftype,
+  payload: prf,
 });
 
-export const loadDietpreference = (preftype) => ({
+export const loadDietpreference = (prf) => ({
   type: types.LOAD_DIETPREFERENCE,
-  payload: preftype,
+  payload: prf,
 });
