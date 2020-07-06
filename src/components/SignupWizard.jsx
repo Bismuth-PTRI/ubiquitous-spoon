@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import 'antd/dist/antd.css';
 import { Steps, Button } from 'antd';
 import FoodPreferences from './Preference';
-import SignUp from './signup';
+import SignUp from './SignUp';
 import * as actions from '../actions/actions';
 import * as api from '../api/common';
 
