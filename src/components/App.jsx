@@ -7,7 +7,8 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
 // imported components
 import Nav from './Nav.jsx';
-import SignUp from './SignUp';
+// import SignUp from './SignUp';
+import SignupWizard from './SignupWizard';
 import Profile from './Profile';
 import Homepage from './Homepage';
 import Login from './Login';
@@ -54,7 +55,7 @@ const App = () => {
 
           <Route path="/signup">
             <Content>
-              <SignUp />
+              <SignupWizard />
             </Content>
           </Route>
 

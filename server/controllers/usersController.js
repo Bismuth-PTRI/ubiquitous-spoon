@@ -7,7 +7,6 @@ const usersController = {};
 // Middleware to check validity of username
 usersController.checkUsername = (req, res, next) => {
   const user = req.body.username.toLowerCase();
-
   const text = `SELECT * FROM users WHERE username = '${user}'`;
   pool.query(text, (err, response) => {
     if (err) {
@@ -148,6 +147,22 @@ usersController.updateUserInfo = (req, res, next) => {
       return next(err);
     }
     next();
+  });
+};
+
+usersController.findFriends = async (req, res, next) => {
+  // select all users in the DB (for now.. should be optimized "later")
+  const text = `SELECT username, name FROM users`;
+
+  // await response for all the users from the DB
+  await pool.query(text, (err, response) => {
+    if (err) {
+      return next(err);
+    }
+
+    res.locals.users = response.rows;
+
+    return next();
   });
 };
 

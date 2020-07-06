@@ -18,6 +18,9 @@ const initialState = {
   glutenFree: null,
   vegan: null,
   vegetarian: null,
+  userInfo: {},
+  foodPrefrence: {},
+  signUpState: '',
 };
 
 const userReducer = (state = initialState, action) => {
@@ -53,6 +56,33 @@ const userReducer = (state = initialState, action) => {
         vegetarian: null,
       };
 
+    case types.SET_USERPREFERENCE:
+      const { foodPrefrence } = state;
+      return {
+        ...state,
+        foodPrefrence: {
+          ...foodPrefrence,
+          [Object.keys(action.payload || { diet: [] })[0]]: Object.values(
+            action.payload || { diet: [] }
+          )[0],
+        },
+      };
+    case types.SET_USERINFO:
+      return {
+        ...state,
+        userInfo: action.payload,
+      };
+    case types.SIGNUP_USER:
+      return {
+        ...state,
+        username: state.userInfo.username,
+        fullName: state.userInfo.name,
+        email: state.userInfo.email,
+        signUpState:
+          action.payload.status === 'success'
+            ? 'success'
+            : `${action.payload.status}: ${action.payload.message}`,
+      };
     default:
       return state;
   }
