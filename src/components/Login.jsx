@@ -82,9 +82,9 @@ const Login = (props) => {
       // Post Login Actions
       props.setUsername(response.username);
       localStorage.setItem('token', response.token);
+      setRedirect('/');
       // Set Timer function here!!!
       auth.silentRefreshTimer(response.token_expiry, response.username);
-      setRedirect('/');
     }
   };
 
