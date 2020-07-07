@@ -4,6 +4,7 @@ import { Card, Switch, Radio, Avatar, Space, Divider, AutoComplete, Input } from
 import { DeleteOutlined, MehOutlined, LinkOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import * as actions from '../actions/actions';
+import FriendFavs from './FriendFavs';
 
 const { Meta } = Card;
 
@@ -23,6 +24,8 @@ const FindFriends = (props) => {
   const [value, setValue] = useState('');
   const [options, setOptions] = useState([]);
   const [allOptions, setAllOptions] = useState([]);
+  const [displayFriendFavs, setDisplayFriendFavs] = useState([]);
+  const [userToDisplay, setUserToDisplay] = useState(null);
 
   // On mount, fetch the users favorites from the DB
   useEffect(() => {
@@ -64,31 +67,46 @@ const FindFriends = (props) => {
     }
   };
 
-  // const onSelect = (data) => {
-  // // will need later
-  // };
+  let userName = null;
+
+  const friendFavsList = null;
+
+  const onSelect = (data) => {
+    console.log('onSelect');
+    // extract the username from the selected autocomplete field
+    // 'Matt_test - Matthew Digel' -> ['Matt_test', 'Matthew Digel']
+    userName = data[0].split(/(\ - )/)[0];
+    setUserToDisplay(userName);
+
+    console.log(userName);
+    // return <Redirect to={`/users/${userName}`} />;
+    // friendFavsList = <FriendFavs username={userName} />;
+  };
 
   // const onChange = (data) => {
-  // // might need this later
+  //   // might need this later
   // };
 
   return (
-    <div className="site-layout-content">
+    <div className="site-layout-content find-friends-background">
       <Card style={{ width: '66%', opacity: 0.9 }}>
         <Divider orientation="left">Find Your Friends Recipes</Divider>
-        <>
+        <div>
           <AutoComplete
             options={options}
             style={{
-              width: 200,
+              width: 500,
+              justifyContent: 'center',
             }}
-            // onSelect={onSelect}
+            onSelect={onSelect}
             onSearch={onSearch}
             // onChange={onChange}
           >
             <Input.Search size="large" placeholder="input here" enterButton />
           </AutoComplete>
-        </>
+        </div>
+
+        {userToDisplay && <FriendFavs username={userToDisplay} />}
       </Card>
     </div>
   );
