@@ -27,6 +27,13 @@ const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.SET_USERNAME:
       // take preferences
+      /*  
+        user action for User Login
+        takes the 'preferences' key from returned BE payload
+        adds it to the foodPreference key in reduce state
+        Perform a group on the 'preferences' using preferencetype === Diet
+                                             and preferencetype === Intolerance
+      */
       const foodPrf = {};
       foodPrf.diet = action.payload.preferences.reduce((usrPrfs, curPref) => {
         if (curPref.preferencetype === 'Diet') {
@@ -71,6 +78,11 @@ const userReducer = (state = initialState, action) => {
       };
 
     case types.SET_USERPREFERENCE:
+      /*
+        redux action for User selection of Preference types while Signin Up
+        Updates foodPreference key of the redux state based on the type of 
+        preference (Diets or Intolerance)
+      */
       const { foodPrefrence } = state;
       return {
         ...state,
@@ -87,6 +99,9 @@ const userReducer = (state = initialState, action) => {
         userInfo: action.payload,
       };
     case types.SIGNUP_USER:
+      /* 
+        updates state keys after successful signin up of user
+      */
       return {
         ...state,
         username: state.userInfo.username,

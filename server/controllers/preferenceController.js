@@ -3,7 +3,11 @@ const handlers = require('./utility');
 
 const preferenceController = {};
 
-// Get all diets in database
+// Get all diets or intolerance in database
+// this is the endpoint accessed when the App.jsx mounts
+// it returns all available preferences based on the type in query
+// Here is the format of the request  http://localhost:3000/api/preference/?type='Diet'
+//                                    http://localhost:3000/api/preference/?type='intolerance'
 preferenceController.getDietOrIntolerances = async (req, res, next) => {
   if (!req.query.type) {
     return next({
@@ -42,6 +46,9 @@ preferenceController.getDietAndIntolerances = async (req, res, next) => {
 };
 
 // Get intolerances and diet preferences for a user
+// using the user_id as argument.
+// for any function, middleware or route to call this function
+// it must have firstto resolve the user_id from whatever paramter it has
 preferenceController.userPreferences = async (user_id) => {
   //const queryString = `SELECT id, user_id, preference_id FROM userpreference WHERE user_id=${req.params.user_id};`;
   const queryString = `SELECT tempTable.id, tempTable.preferencename, tempTable.type_id, preferencetype.preference as preferencetype
@@ -58,6 +65,9 @@ preferenceController.userPreferences = async (user_id) => {
   }
 };
 
+// this is a middle ware to return a user's preferences
+// hence the username key on the res.locals
+// it is linked to login routes
 preferenceController.fetchUserPreferences = async (req, res, next) => {
   let user_id = await handlers.userId(res.locals.username); // should be req.locals.username
   if (!user_id.status) {
@@ -78,6 +88,10 @@ preferenceController.fetchUserPreferences = async (req, res, next) => {
   }
 };
 
+// get a user's preferences
+// this can be called indepedently as a route and not as a middleware
+// hence the user_id available on the req.params
+// e.g. http://localhost:3000/api/preference/user/4
 preferenceController.getUserPreferences = async (req, res, next) => {
   const prfs = await preferenceController.userPreferences(req.params.user_id);
   if (prfs.status) {
@@ -92,15 +106,11 @@ preferenceController.getUserPreferences = async (req, res, next) => {
 };
 
 // Add user preferences to the database
+// this is a middle ware to add user's preferences to the database in BE
+// hence the username key on the res.locals
+// it is linked to signup routes
 preferenceController.addUserPreferences = async (req, res, next) => {
   let prefString = '';
-
-  // if (!req.body.username) {
-  //   return next({
-  //     log: 'addUserPreferences',
-  //     message: { err: 'Username not provided' },
-  //   });
-  // }
 
   let user_id = await handlers.userId(res.locals.username); // should be res.locals.username
   if (!user_id.status) {

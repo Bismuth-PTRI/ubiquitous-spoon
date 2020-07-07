@@ -77,11 +77,16 @@ class SignupWizard extends React.Component {
 
   async onFinish() {
     const prefs = {};
+    // convert array of user selected preferences (values) into array of ids using the global
+    // values of diets and intolerances in state.
     prefs.diet = api.identifyPreferences(this.props.diet, [...this.props.foodPrefrence.diet]);
     prefs.intolerance = api.identifyPreferences(this.props.intolerance, [
       ...this.props.foodPrefrence.intolerance,
     ]);
+    // invoke the signUp User api
     const rsp = await api.signupUserApi(this.props.userinfo, prefs);
+    // call redux state action to set user keys in state in readiness for use
+    // as a valid user and login user in
     this.props.signupUser(rsp);
     if (rsp.status === 'success') {
       this.setState({ toMain: true });

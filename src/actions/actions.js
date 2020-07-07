@@ -21,6 +21,11 @@ export const clearUser = () => ({
   type: types.CLEAR_USER,
 });
 
+/**
+ *
+ * @param {Object} prf User Information Object returned after user logs in
+ *
+ */
 export const setUserInfo = (loginInfo) => ({
   type: types.SET_USERINFO,
   payload: loginInfo,
@@ -41,11 +46,21 @@ export const setUserPreference = (foodPrefs) => ({
   payload: foodPrefs,
 });
 
+/**
+ *
+ * @param {Object} prf Intolerance Preference Object payload
+ * An array of objects {id: and value:}
+ */
 export const loadIntolerances = (prf) => ({
   type: types.LOAD_INTOLERANCES,
   payload: prf,
 });
 
+/**
+ *
+ * @param {Object} prf Diet Preference Object payload
+ * An array of objects {id: and value:}
+ */
 export const loadDietpreference = (prf) => ({
   type: types.LOAD_DIETPREFERENCE,
   payload: prf,

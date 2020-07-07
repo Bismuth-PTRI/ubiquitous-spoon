@@ -9,6 +9,8 @@ import { Form, Checkbox } from 'antd';
 // Whole30
 // Ketogenic
 
+// map diets key from redux state to component's state
+// to ensure changes made globally are reflected locally to component
 const mapStateToProps = (state) => {
   return {
     items: state.food.diets,
@@ -16,6 +18,8 @@ const mapStateToProps = (state) => {
 };
 
 const DietPrefs = (props) => {
+  // map items/diets array object to an array of values (removing the id key) as thats
+  // what will be shown to the user in the Checkbox.Group component
   const [checkOptions] = useState(Object.values(props.items).map((m) => m.value));
   return (
     <div>

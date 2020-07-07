@@ -16,6 +16,11 @@ import reducers from './reducers/index';
 // we are adding composeWithDevTools here to get easy access to the Redux dev tools
 const store = createStore(reducers, composeWithDevTools());
 
+/* 
+  a subscription method for checking the current state of redux
+  every changes to redux will call this function cos its
+  subscribed to the store
+*/
 // store.subscribe(() => {
 //   const currentState = store.getState();
 //   console.log('Curretn Source of Truth :: ', currentState);

@@ -20,13 +20,8 @@ import PublicProfile from './PublicProfile';
 import { loadDietpreference, loadIntolerances } from '../actions/actions';
 import { loadPreferences } from '../api/common';
 
-// const mapStateToProps = (state) => {
-//   return {
-//     diet: state.food.diets,
-//     intolerance: state.food.intolerances,
-//   };
-// };
-
+// map actions for redux to load default
+// diet and intolerance options avaibale from BE
 const mapDispatchToProps = (dispatch) => ({
   loaddiets: (payload) => dispatch(loadDietpreference(payload)),
   loadintolernace: (payload) => dispatch(loadIntolerances(payload)),
@@ -41,13 +36,15 @@ const App = (props) => {
     const LoadPreferences = async () => {
       try {
         const prfs_d = await loadPreferences('Diet');
-        await props.loaddiets(prfs_d);
+        props.loaddiets && props.loaddiets(prfs_d);
       } catch (err) {}
       try {
         const prfs_i = await loadPreferences('Intolerance');
-        await props.loadintolernace(prfs_i);
+        props.loadintolernace && props.loadintolernace(prfs_i);
       } catch (err) {}
     };
+    // invoke this function once the App.jsx component mounts
+    // dispatch the state actions to load intolerance and diets
     LoadPreferences();
   }, []);
 
