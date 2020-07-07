@@ -11,7 +11,6 @@
 
 // import actionType constants
 import * as types from '../constants/actionTypes';
-import * as api from '../api/common';
 
 export const setUsername = (username) => ({
   type: types.SET_USERNAME,
@@ -22,9 +21,9 @@ export const clearUser = () => ({
   type: types.CLEAR_USER,
 });
 
-export const setUserInfo = (userInfo) => ({
+export const setUserInfo = (loginInfo) => ({
   type: types.SET_USERINFO,
-  payload: userInfo,
+  payload: loginInfo,
 });
 
 export const setUserPrefs = (prefs) => ({

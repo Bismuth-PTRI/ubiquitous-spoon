@@ -26,23 +26,37 @@ const initialState = {
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.SET_USERNAME:
-      const username = action.payload;
-      return { ...state, username };
+      // take preferences
+      const foodPrf = {};
+      foodPrf.diet = action.payload.preferences.reduce((usrPrfs, curPref) => {
+        if (curPref.preferencetype === 'Diet') {
+          usrPrfs.push(curPref.preferencename);
+        }
+        return usrPrfs;
+      }, []);
+      foodPrf.intolerance = action.payload.preferences.reduce((usrPrfs, curPref) => {
+        if (curPref.preferencetype === 'Intolerance') {
+          usrPrfs.push(curPref.preferencename);
+        }
+        return usrPrfs;
+      }, []);
+      const username = action.payload.username;
+      return { ...state, username, foodPrefrence: foodPrf };
 
     case types.SET_USERPREFS:
       const email = action.payload.email;
       const fullName = action.payload.name;
-      const glutenFree = action.payload.foodPrefs.glutenFree;
-      const vegan = action.payload.foodPrefs.vegan;
-      const vegetarian = action.payload.foodPrefs.vegetarian;
+      // const glutenFree = action.payload.foodPrefs.glutenFree;
+      // const vegan = action.payload.foodPrefs.vegan;
+      // const vegetarian = action.payload.foodPrefs.vegetarian;
 
       return {
         ...state,
         email,
         fullName,
-        glutenFree,
-        vegan,
-        vegetarian,
+        // glutenFree,
+        // vegan,
+        // vegetarian,
       };
 
     case types.CLEAR_USER:

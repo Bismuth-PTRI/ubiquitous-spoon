@@ -80,7 +80,7 @@ const Login = (props) => {
       // change redirect in local state to true
 
       // Post Login Actions
-      props.setUsername(response.username);
+      props.setUsername(response);
       localStorage.setItem('token', response.token);
       setRedirect('/');
       // Set Timer function here!!!
