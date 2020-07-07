@@ -1,31 +1,30 @@
-import React, { useState, useEffect } from 'react';
-
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { Form, Checkbox } from 'antd';
 
-// https://spoonacular.com/food-api/docs#Intolerances
-// Dairy
-// Egg
-// Gluten
-// Grain
-// Peanut
-// Seafood
-// Sesame
-// Shellfish
-// Soy
-// Sulfite
-// Tree Nut
-// Wheat
+// map intolerance key from redux state to component's state
+// to ensure changes made globally are reflected locally to component
+const mapStateToProps = (state) => {
+  return {
+    items: state.food.intolerances,
+  };
+};
 
-const Intolerances = ({ intoleranceList, updateIntolerances, ...props }) => {
-  const [intoleranceOptions] = useState(Object.values(props).map((m) => m.value));
+const Intolerances = (props) => {
+  // map items/intolerances array object to an array of values (removeing the id key) as thats
+  // what will be shown to the user in the Checkbox.Group component
+  const [intoleranceOptions] = useState(Object.values(props.items).map((m) => m.value));
 
   return (
     <div>
       <Form.Item name="intolerance-group" label="Intolerances">
-        <Checkbox.Group options={intoleranceOptions} onChange={(e) => updateIntolerances(e)} />
+        <Checkbox.Group
+          options={intoleranceOptions}
+          onChange={(e) => props.updateIntolerances(e)}
+        />
       </Form.Item>
     </div>
   );
 };
 
-export default Intolerances;
+export default connect(mapStateToProps)(Intolerances);

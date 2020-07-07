@@ -36,9 +36,9 @@ usersController.checkLogin = (req, res, next) => {
       return next({ log: 'checkLogin', message: { err: 'Username not found' } });
     }
     // If user exists, set res.locals for food preferences so they can be used in searches
-    res.locals.vegan = response.rows[0].vegan;
-    res.locals.vegetarian = response.rows[0].vegetarian;
-    res.locals.glutenFree = response.rows[0].gluten_free;
+    // res.locals.vegan = response.rows[0].vegan;
+    // res.locals.vegetarian = response.rows[0].vegetarian;
+    // res.locals.glutenFree = response.rows[0].gluten_free;
     // If user does exist, grab bcrypted password from DB
     bcryptPassword = response.rows[0].password;
 
@@ -53,7 +53,7 @@ usersController.checkLogin = (req, res, next) => {
         return next(err);
       }
       res.locals.username = req.body.username;
-      console.log('gluten free? ', res.locals.glutenFree);
+      // console.log('gluten free? ', res.locals.glutenFree);
       next();
     });
   });
@@ -92,8 +92,10 @@ usersController.checkPassword = (req, res, next) => {
 
 // If username and password look good, add new user to database
 usersController.addUser = (req, res, next) => {
-  const text = `INSERT INTO users (username, password, name, email, vegan, vegetarian, gluten_free)
-  VALUES('${req.body.username}', '${res.locals.password}', '${req.body.name}', '${req.body.email}', '${req.body.vegan}', '${req.body.vegetarian}', '${req.body.glutenFree}');`;
+  // const text = `INSERT INTO users (username, password, name, email, vegan, vegetarian, gluten_free)
+  // VALUES('${req.body.username}', '${res.locals.password}', '${req.body.name}', '${req.body.email}', '${req.body.vegan}', '${req.body.vegetarian}', '${req.body.glutenFree}');`;
+  const text = `INSERT INTO users (username, password, name, email)
+  VALUES('${req.body.username}', '${res.locals.password}', '${req.body.name}', '${req.body.email}');`;
   pool.query(text, (err, response) => {
     if (err) {
       return next({ log: 'addUser', message: { err: 'HERE: Error in addUser' } });
@@ -121,7 +123,8 @@ usersController.getUserInfo = (req, res, next) => {
   const { username } = req.body;
 
   // get fields (except password) from database for that user
-  const text = `SELECT username, name, email, vegan, vegetarian, gluten_free FROM users WHERE username = '${username}'`;
+  // const text = `SELECT username, name, email, vegan, vegetarian, gluten_free FROM users WHERE username = '${username}'`;
+  const text = `SELECT username, name, email FROM users WHERE username = '${username}'`;
   pool.query(text, (err, response) => {
     if (err) {
       return next(err);
@@ -136,12 +139,13 @@ usersController.updateUserInfo = (req, res, next) => {
   const { username } = req.body;
   const { name } = req.body;
   const { email } = req.body;
-  const { glutenFree } = req.body;
-  const { vegan } = req.body;
-  const { vegetarian } = req.body;
+  // const { glutenFree } = req.body;
+  // const { vegan } = req.body;
+  // const { vegetarian } = req.body;
 
   // Update info in database
-  const text = `UPDATE users SET name = '${name}', email = '${email}', gluten_free = '${glutenFree}', vegan = '${vegan}', vegetarian = '${vegetarian}' WHERE username = '${username}'`;
+  // const text = `UPDATE users SET name = '${name}', email = '${email}', gluten_free = '${glutenFree}', vegan = '${vegan}', vegetarian = '${vegetarian}' WHERE username = '${username}'`;
+  const text = `UPDATE users SET name = '${name}', email = '${email}' WHERE username = '${username}'`;
   pool.query(text, (err, response) => {
     if (err) {
       return next(err);

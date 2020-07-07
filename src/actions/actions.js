@@ -11,7 +11,6 @@
 
 // import actionType constants
 import * as types from '../constants/actionTypes';
-import * as api from '../api/common';
 
 export const setUsername = (username) => ({
   type: types.SET_USERNAME,
@@ -22,9 +21,14 @@ export const clearUser = () => ({
   type: types.CLEAR_USER,
 });
 
-export const setUserInfo = (userInfo) => ({
+/**
+ *
+ * @param {Object} prf User Information Object returned after user logs in
+ *
+ */
+export const setUserInfo = (loginInfo) => ({
   type: types.SET_USERINFO,
-  payload: userInfo,
+  payload: loginInfo,
 });
 
 export const setUserPrefs = (prefs) => ({
@@ -42,12 +46,22 @@ export const setUserPreference = (foodPrefs) => ({
   payload: foodPrefs,
 });
 
-export const loadIntolerances = (preftype) => ({
+/**
+ *
+ * @param {Object} prf Intolerance Preference Object payload
+ * An array of objects {id: and value:}
+ */
+export const loadIntolerances = (prf) => ({
   type: types.LOAD_INTOLERANCES,
-  payload: preftype,
+  payload: prf,
 });
 
-export const loadDietpreference = (preftype) => ({
+/**
+ *
+ * @param {Object} prf Diet Preference Object payload
+ * An array of objects {id: and value:}
+ */
+export const loadDietpreference = (prf) => ({
   type: types.LOAD_DIETPREFERENCE,
-  payload: preftype,
+  payload: prf,
 });

@@ -26,10 +26,23 @@ const initialState = {
 const foodReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.LOAD_DIETPREFERENCE:
-    //
+      /* 
+        update diets in state with the payload returned from the BE
+        when the app starts in the App.jsx component
+      */
+      return {
+        ...state,
+        diets: action.payload.success ? action.payload.diet : state.diets,
+      };
     case types.LOAD_INTOLERANCES:
-    //
-    //
+      /*
+      update intolerance in state with the payload returned from the BE
+      when the app starts in the App.jsx component
+      */
+      return {
+        ...state,
+        intolerances: action.payload.success ? action.payload.intolerance : state.intolerances,
+      };
     default:
       return state;
   }

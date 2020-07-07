@@ -6,17 +6,18 @@ import DietPrefs from './DietPrefs';
 
 const FoodPreferences = (props) => {
   const setTolerances = (e) => {
-    props.updatePreference({ intolenrance: e });
+    props.updatePreference({ intolerance: e });
   };
   const setPrefs = (e) => {
     props.updatePreference({ diet: e });
   };
+
   return (
     <Form>
       <Form.Item>
-        <Intolerances updateIntolerances={setTolerances} {...props.intolerance}></Intolerances>
+        <Intolerances updateIntolerances={setTolerances}></Intolerances>
         <br></br>
-        <DietPrefs pushPrefs={setPrefs} {...props.diet}></DietPrefs>
+        <DietPrefs pushPrefs={setPrefs}></DietPrefs>
       </Form.Item>
     </Form>
   );
