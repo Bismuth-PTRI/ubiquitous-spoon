@@ -14,6 +14,7 @@ import Homepage from './Homepage';
 import Login from './Login';
 import Favorites from './Favorites';
 import FindFriends from './FindFriends';
+import PublicProfile from './PublicProfile';
 
 const { Header, Content, Footer } = Layout;
 
@@ -31,6 +32,18 @@ const App = () => {
           <Route exact path="/">
             <Content>
               <Homepage />
+            </Content>
+          </Route>
+
+          <Route path="/user/:userID">
+            <Content>
+              <PublicProfile />
+            </Content>
+          </Route>
+
+          <Route path="/user">
+            <Content>
+              <PublicProfile />
             </Content>
           </Route>
 
