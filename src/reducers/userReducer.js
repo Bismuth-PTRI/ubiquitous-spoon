@@ -18,28 +18,52 @@ const initialState = {
   glutenFree: null,
   vegan: null,
   vegetarian: null,
+  userInfo: {},
+  foodPreference: {},
+  signUpState: '',
 };
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.SET_USERNAME:
-      const username = action.payload;
-      return { ...state, username };
+      // take preferences
+      /*  
+        user action for User Login
+        takes the 'preferences' key from returned BE payload
+        adds it to the foodPreference key in reduce state
+        Perform a group on the 'preferences' using preferencetype === Diet
+                                             and preferencetype === Intolerance
+      */
+      const foodPrf = {};
+      foodPrf.diet = action.payload.preferences.reduce((usrPrfs, curPref) => {
+        if (curPref.preferencetype === 'Diet') {
+          usrPrfs.push(curPref.preferencename);
+        }
+        return usrPrfs;
+      }, []);
+      foodPrf.intolerance = action.payload.preferences.reduce((usrPrfs, curPref) => {
+        if (curPref.preferencetype === 'Intolerance') {
+          usrPrfs.push(curPref.preferencename);
+        }
+        return usrPrfs;
+      }, []);
+      const username = action.payload.username;
+      return { ...state, username, foodPreference: foodPrf };
 
     case types.SET_USERPREFS:
       const email = action.payload.email;
       const fullName = action.payload.name;
-      const glutenFree = action.payload.foodPrefs.glutenFree;
-      const vegan = action.payload.foodPrefs.vegan;
-      const vegetarian = action.payload.foodPrefs.vegetarian;
+      // const glutenFree = action.payload.foodPrefs.glutenFree;
+      // const vegan = action.payload.foodPrefs.vegan;
+      // const vegetarian = action.payload.foodPrefs.vegetarian;
 
       return {
         ...state,
         email,
         fullName,
-        glutenFree,
-        vegan,
-        vegetarian,
+        // glutenFree,
+        // vegan,
+        // vegetarian,
       };
 
     case types.CLEAR_USER:
@@ -48,11 +72,46 @@ const userReducer = (state = initialState, action) => {
         username: null,
         fullName: null,
         email: null,
-        glutenFree: null,
-        vegan: null,
-        vegetarian: null,
+        // glutenFree: null,
+        // vegan: null,
+        // vegetarian: null,
       };
 
+    case types.SET_USERPREFERENCE:
+      /*
+        redux action for User selection of Preference types while Signin Up
+        Updates foodPreference key of the redux state based on the type of 
+        preference (Diets or Intolerance)
+      */
+      const { foodPreference } = state;
+      return {
+        ...state,
+        foodPreference: {
+          ...foodPreference,
+          [Object.keys(action.payload || { diet: [] })[0]]: Object.values(
+            action.payload || { diet: [] }
+          )[0],
+        },
+      };
+    case types.SET_USERINFO:
+      return {
+        ...state,
+        userInfo: action.payload,
+      };
+    case types.SIGNUP_USER:
+      /* 
+        updates state keys after successful signin up of user
+      */
+      return {
+        ...state,
+        username: state.userInfo.username,
+        fullName: state.userInfo.name,
+        email: state.userInfo.email,
+        signUpState:
+          action.payload.status === 'success'
+            ? 'success'
+            : `${action.payload.status}: ${action.payload.message}`,
+      };
     default:
       return state;
   }

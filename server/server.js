@@ -14,28 +14,35 @@ const cookieParser = require('cookie-parser');
 // Importing routes
 const signup = require('./routes/signup');
 const login = require('./routes/login');
-const favorites = require('./routes/favorites');
 const logout = require('./routes/logout');
+const favorites = require('./routes/favorites');
 const userInfo = require('./routes/userinfo');
+const jwtContoller = require('./controllers/jwtController');
+const refresh = require('./routes/refresh');
+const foodPreferences = require('./routes/foodpreferences');
 
 const app = express();
 
+// Middleware for all endpoints
 app.use(cookieParser());
-
-// Body Parser
 app.use(express.json());
+app.use(jwtContoller.verifyJWT);
 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Routes
+// Routes not requiring auth
 app.use('/api/signup', signup);
 app.use('/api/login', login);
 app.use('/api/logout', logout);
+
+// Routes requiring auth
+app.use('/api/refresh_token', refresh);
 app.use('/api/user/info', userInfo);
 app.use('/api/favorites', favorites);
+app.use('/api/preference', foodPreferences);
 
 // Error handler
 const errorHandler = (err, req, res, next) => {
@@ -47,6 +54,7 @@ const errorHandler = (err, req, res, next) => {
   };
   const errorObj = Object.assign(defaultErr, err);
   console.log(`${errorObj.log}`.brightRed);
+  console.log(`${errorObj.message.err}`.brightRed);
   res.status(errorObj.status).send(JSON.stringify(errorObj.message));
 };
 

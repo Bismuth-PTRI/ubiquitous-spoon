@@ -26,6 +26,16 @@ body {
   min-height: 100vh;
 }
 
+.find-friends-background {
+  background: url('/img/zach-reiner-K4XHVhJk6kw-unsplash.jpg') no-repeat fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  display: flex;
+  min-height: 100vh;
+}
+
 .Recipe_Container {
   display: flex;
   flex-direction: row;

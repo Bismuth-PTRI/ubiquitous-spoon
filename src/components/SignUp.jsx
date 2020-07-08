@@ -1,6 +1,18 @@
-import React, { useState } from 'react';
-import { Redirect } from 'react-router-dom';
-import { PageHeader, Form, Input, Tooltip, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Alert } from 'antd';
+import React, { useState, useEffect } from 'react';
+import {
+  PageHeader,
+  Form,
+  Input,
+  Tooltip,
+  Cascader,
+  Select,
+  Row,
+  Col,
+  Checkbox,
+  Button,
+  AutoComplete,
+  Alert,
+} from 'antd';
 import { connect } from 'react-redux';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import * as actions from '../actions/actions';
@@ -36,69 +48,30 @@ const tailFormItemLayout = {
   },
 };
 
-const mapStateToProps = () => ({});
-
-const mapDispatchToProps = (dispatch) => ({
-  setUsername: (username) => {
-    dispatch(actions.setUsername(username));
-  },
+const mapStateToProps = (state) => ({
+  signupstate: state.user.signUpState,
 });
 
 const SignUp = (props) => {
-  const [redirect, setRedirect] = useState(false);
-  const [notice, setNotice] = useState('');
+  const [notice, setNotice] = useState(props.signupstate ? props.signupstate.split(':')[1] : '');
+  const [uname, setUname] = useState('');
+  const [pwd1, setPwd1] = useState('');
+  const [pwd2, setPwd2] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    // console.log('Received values of form: ', values);
-
-    //["gluten free", "vegetarian", "vegan"]
-    const glutenFree = values['checkbox-group'] ? values['checkbox-group'].includes('gluten free') : false;
-    const vegetarian = values['checkbox-group'] ? values['checkbox-group'].includes('vegetarian') : false;
-    const vegan = values['checkbox-group'] ? values['checkbox-group'].includes('vegan') : false;
-
+  useEffect(() => {
     const data = {
-      username: values.username,
-      password1: values.password,
-      password2: values.confirm,
-      name: values.name,
-      email: values.email,
-      glutenFree,
-      vegetarian,
-      vegan,
+      username: uname,
+      password1: pwd1,
+      password2: pwd2,
+      name: name,
+      email: email,
     };
-
-    const userCheck = this;
-
-    // fetch request to create a user
-    fetch('/api/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((resData) => {
-        if (resData.err === 'Username already exists') {
-          // display the error as a notice in state
-          setNotice(resData.err);
-          form.setFieldsValue({ username: '' });
-        } else if (resData.success) {
-          // change redirect in local state to true
-          props.setUsername(resData.username);
-          setRedirect(true);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  //Redirect upon successful sign up
-  if (redirect) {
-    return <Redirect to="/" />;
-  }
+    props.updateInfo(data);
+    setTimeout(() => setNotice(''), 5000);
+  }, [uname, name, email, pwd1, pwd2]);
 
   return (
     <div className="site-layout-content SignUp_Container">
@@ -109,11 +82,13 @@ const SignUp = (props) => {
         {...formItemLayout}
         form={form}
         name="signup"
-        onFinish={onFinish}
+        // onFinish={onFinish}
         // scrollToFirstError
       >
         {/* conditionally render the alert if an error notice has occured */}
-        {notice && <Alert style={{ marginBottom: 24 }} message={notice} type="error" showIcon closable />}
+        {notice && (
+          <Alert style={{ marginBottom: 24 }} message={notice} type="error" showIcon closable />
+        )}
 
         <Form.Item
           name="username"
@@ -133,7 +108,7 @@ const SignUp = (props) => {
             },
           ]}
         >
-          <Input onChange={() => setNotice('')} />
+          <Input onChange={(e) => setUname(e.target.value)} />
         </Form.Item>
 
         <Form.Item
@@ -150,7 +125,7 @@ const SignUp = (props) => {
             },
           ]}
         >
-          <Input />
+          <Input onChange={(e) => setEmail(e.target.value)} />
         </Form.Item>
 
         <Form.Item
@@ -164,7 +139,7 @@ const SignUp = (props) => {
           ]}
           hasFeedback
         >
-          <Input.Password />
+          <Input.Password onChange={(e) => setPwd1(e.target.value)} />
         </Form.Item>
 
         <Form.Item
@@ -188,7 +163,7 @@ const SignUp = (props) => {
             }),
           ]}
         >
-          <Input.Password />
+          <Input.Password onChange={(e) => setPwd2(e.target.value)} />
         </Form.Item>
 
         <Form.Item
@@ -209,39 +184,11 @@ const SignUp = (props) => {
             },
           ]}
         >
-          <Input />
-        </Form.Item>
-
-        <Form.Item name="checkbox-group" label="Food Preferences">
-          <Checkbox.Group>
-            <Row>
-              <Col span={24}>
-                <Checkbox value="gluten free" style={{ lineHeight: '32px' }}>
-                  Gluten Free
-                </Checkbox>
-              </Col>
-              <Col span={24}>
-                <Checkbox value="vegan" style={{ lineHeight: '32px' }}>
-                  Vegan
-                </Checkbox>
-              </Col>
-              <Col span={24}>
-                <Checkbox value="vegetarian" style={{ lineHeight: '32px' }}>
-                  Vegetarian
-                </Checkbox>
-              </Col>
-            </Row>
-          </Checkbox.Group>
-        </Form.Item>
-
-        <Form.Item {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">
-            Sign Up
-          </Button>
+          <Input onChange={(e) => setName(e.target.value)} />
         </Form.Item>
       </Form>
     </div>
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
+export default connect(mapStateToProps, null)(SignUp);
