@@ -14,17 +14,18 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {};
 
-const mockVal = (str, repeat = 1) => ({
-  // value: [str.repeat(repeat)],
-  value: ['matt', 'dulio', 'lanre', 'rob'],
-});
-
 const FindFriends = (props) => {
   // Functions from Ant Design for 'AutoComplete - Basic Usage'
-  const [value, setValue] = useState('');
+  /**
+   * Hooks
+   */
+  // options for autocomplete
   const [options, setOptions] = useState([]);
+
+  // used to store all the user's from the DB for now
   const [allOptions, setAllOptions] = useState([]);
-  const [displayFriendFavs, setDisplayFriendFavs] = useState([]);
+
+  // updated in onSelect to show a friends favorites
   const [userToDisplay, setUserToDisplay] = useState(null);
 
   // On mount, fetch the users favorites from the DB
@@ -67,20 +68,10 @@ const FindFriends = (props) => {
     }
   };
 
-  let userName = null;
-
-  const friendFavsList = null;
-
   const onSelect = (data) => {
-    console.log('onSelect');
     // extract the username from the selected autocomplete field
-    // 'Matt_test - Matthew Digel' -> ['Matt_test', 'Matthew Digel']
-    userName = data[0].split(/(\ - )/)[0];
+    const userName = data[0].split(/(\ - )/)[0]; // 'Matt_test - Matthew Digel' -> ['Matt_test', 'Matthew Digel']
     setUserToDisplay(userName);
-
-    console.log(userName);
-    // return <Redirect to={`/users/${userName}`} />;
-    // friendFavsList = <FriendFavs username={userName} />;
   };
 
   // const onChange = (data) => {
@@ -106,7 +97,7 @@ const FindFriends = (props) => {
           </AutoComplete>
         </div>
 
-        {userToDisplay && <FriendFavs username={userToDisplay} />}
+        {userToDisplay && <FriendFavs username={props.username} friendsname={userToDisplay} />}
       </Card>
     </div>
   );

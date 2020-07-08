@@ -27,7 +27,7 @@ body {
 }
 
 .find-friends-background {
-  background: url('/img/zach-reiner-K4XHVhJk6kw-unsplash.jpg') no-repeat;
+  background: url('/img/zach-reiner-K4XHVhJk6kw-unsplash.jpg') no-repeat fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
