@@ -51,10 +51,38 @@ export const signupUserApi = async (uObj, pObj) => {
         }
       })
       .catch((err) => {
-        console.log('User Signup Error :: ', err);
+        console.error('User Signup Error :: ', err);
         return { status: 'error', message: err };
       });
   };
   const signupresp = await apiCall(uObj, pObj);
   return signupresp;
+};
+
+export const updateUserProfile = async (uObj, pObj) => {
+  const apiCall = async () => {
+    return await fetch('/api/user/info', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ...uObj, preference: pObj }),
+    })
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.err !== undefined) {
+          return { status: 'failed', message: resData.err };
+        } else if (resData.success) {
+          return { status: 'success', message: 'Profile Updated' };
+        }
+      })
+      .catch((err) => {
+        console.log('User Profile Update Error :: ', err);
+        return { status: 'error', message: err };
+      });
+  };
+  // console.log('User Object to Profile Update :: ', uObj);
+  // console.log('User Preference to Profile Update :: ', pObj);
+  const updateresp = await apiCall(uObj, pObj);
+  return updateresp;
 };
