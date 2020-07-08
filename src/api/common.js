@@ -8,7 +8,10 @@ import 'regenerator-runtime/runtime';
  * Return an array of ids based on the selected array of item values in userSelection
  */
 export const identifyPreferences = (glbItems, usrSelection) => {
-  return usrSelection.map((u) => Object.values(glbItems).filter((glb) => u === glb.value)[0].id);
+  return usrSelection.map(
+    (uselectedPreference) =>
+      Object.values(glbItems).filter((glb) => uselectedPreference === glb.value)[0].id
+  );
 };
 
 /**
@@ -33,14 +36,14 @@ export const loadPreferences = async (type) => {
  * @param {Object} uObj user information object
  * @param {Objec} pObj food preference object
  */
-export const signupUserApi = async (uObj, pObj) => {
+export const signupUserApi = async (userInfoObj, userPreferenceObj) => {
   const apiCall = async () => {
     return await fetch('/api/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...uObj, preference: pObj }),
+      body: JSON.stringify({ ...userInfoObj, preference: userPreferenceObj }),
     })
       .then((res) => res.json())
       .then((resData) => {
@@ -51,10 +54,36 @@ export const signupUserApi = async (uObj, pObj) => {
         }
       })
       .catch((err) => {
-        console.log('User Signup Error :: ', err);
+        console.error('User Signup Error :: ', err);
         return { status: 'error', message: err };
       });
   };
-  const signupresp = await apiCall(uObj, pObj);
+  const signupresp = await apiCall(userInfoObj, userPreferenceObj);
   return signupresp;
+};
+
+export const updateUserProfile = async (userInfoObj, userPreferenceObj) => {
+  const apiCall = async () => {
+    return await fetch('/api/user/info', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ...userInfoObj, preference: userPreferenceObj }),
+    })
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.err !== undefined) {
+          return { status: 'failed', message: resData.err };
+        } else if (resData.success) {
+          return { status: 'success', message: 'Profile Updated' };
+        }
+      })
+      .catch((err) => {
+        console.log('User Profile Update Error :: ', err);
+        return { status: 'error', message: err };
+      });
+  };
+  const updateresp = await apiCall(userInfoObj, userPreferenceObj);
+  return updateresp;
 };
