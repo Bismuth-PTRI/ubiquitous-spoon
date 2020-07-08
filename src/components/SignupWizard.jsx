@@ -15,7 +15,7 @@ const mapStateToProps = (state) => {
     diet: state.food.diets,
     intolerance: state.food.intolerances,
     userinfo: state.user.userInfo,
-    foodPrefrence: state.user.foodPrefrence,
+    foodPreference: state.user.foodPreference,
     signupstate: state.user.signUpState,
   };
 };
@@ -79,9 +79,9 @@ class SignupWizard extends React.Component {
     const prefs = {};
     // convert array of user selected preferences (values) into array of ids using the global
     // values of diets and intolerances in state.
-    prefs.diet = api.identifyPreferences(this.props.diet, [...this.props.foodPrefrence.diet]);
+    prefs.diet = api.identifyPreferences(this.props.diet, [...this.props.foodPreference.diet]);
     prefs.intolerance = api.identifyPreferences(this.props.intolerance, [
-      ...this.props.foodPrefrence.intolerance,
+      ...this.props.foodPreference.intolerance,
     ]);
     // invoke the signUp User api
     const rsp = await api.signupUserApi(this.props.userinfo, prefs);
