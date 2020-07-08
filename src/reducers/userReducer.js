@@ -72,9 +72,9 @@ const userReducer = (state = initialState, action) => {
         username: null,
         fullName: null,
         email: null,
-        glutenFree: null,
-        vegan: null,
-        vegetarian: null,
+        // glutenFree: null,
+        // vegan: null,
+        // vegetarian: null,
       };
 
     case types.SET_USERPREFERENCE:
