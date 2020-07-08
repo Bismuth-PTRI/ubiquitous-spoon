@@ -11,11 +11,11 @@ function PublicProfile() {
   return (
     <div>
       <div>HELLOO</div>
-        <div>
-          <Link to="/user/fred">Fred</Link>
-        </div>
+      <div>
+        <Link to="/user/fred">Fred</Link>
+      </div>
     </div>
-  );  
+  );
 }
 
 export default PublicProfile;

@@ -14,6 +14,7 @@ import { Form, Checkbox } from 'antd';
 const mapStateToProps = (state) => {
   return {
     items: state.food.diets,
+    userPreferences: state.user.foodPreference,
   };
 };
 
@@ -21,9 +22,13 @@ const DietPrefs = (props) => {
   // map items/diets array object to an array of values (removing the id key) as thats
   // what will be shown to the user in the Checkbox.Group component
   const [checkOptions] = useState(Object.values(props.items).map((m) => m.value));
+  const [itemsSelected, setitemsSelected] = useState(
+    props.userPreferences && props.userPreferences.diet ? props.userPreferences.diet : []
+  );
+
   return (
     <div>
-      <Form.Item name="checkbox-group" label="Food Preferences">
+      <Form.Item name="checkbox-group" label="Food Preferences" initialValue={itemsSelected}>
         <Checkbox.Group options={checkOptions} onChange={(e) => props.pushPrefs(e)} />
       </Form.Item>
     </div>

@@ -110,7 +110,7 @@ preferenceController.getUserPreferences = async (req, res, next) => {
 // hence the username key on the res.locals
 // it is linked to signup routes
 preferenceController.addUserPreferences = async (req, res, next) => {
-  let prefString = '';
+  // let prefString = '';
 
   let user_id = await handlers.userId(res.locals.username); // should be res.locals.username
   if (!user_id.status) {
@@ -120,26 +120,68 @@ preferenceController.addUserPreferences = async (req, res, next) => {
     });
   }
 
-  req.body.preference.diet.map((diet) => (prefString += `(${user_id.value}, ${diet}),`));
-  req.body.preference.intolerance.map(
-    (intolerance) => (prefString += `(${user_id.value}, ${intolerance}),`)
-  );
+  const insertRsp = await handlers.insertUserPreferences(req.body.preference, user_id);
+  if (!insertRsp.status) {
+    return next({
+      log: `addUserPreferences error: ${insertRsp.value}`,
+      message: { err: `HERE : Error in addUserPreferences` },
+    });
+  }
 
-  prefString = prefString.slice(0, -1);
+  res.locals.userpreferences = req.body.userpreferences;
+  return next();
 
-  const text = `INSERT INTO userpreference (user_id, preference_id)
-  VALUES ${prefString};`;
-  await pool.query(text, (err, response) => {
-    if (err) {
+  // //////
+  // req.body.preference.diet.map((diet) => (prefString += `(${user_id.value}, ${diet}),`));
+  // req.body.preference.intolerance.map(
+  //   (intolerance) => (prefString += `(${user_id.value}, ${intolerance}),`)
+  // );
+
+  // prefString = prefString.slice(0, -1);
+
+  // ///////
+
+  // const text = `INSERT INTO userpreference (user_id, preference_id)
+  // VALUES ${prefString};`;
+  // await pool.query(text, (err, response) => {
+  //   if (err) {
+  //     return next({
+  //       log: 'addUserPreferences',
+  //       log: `addUserPreferences error: ${err.message}`,
+  //       message: { err: `HERE : Error in addUserPreferences` },
+  //     });
+  //   }
+  //   res.locals.userpreferences = req.body.userpreferences;
+  //   next();
+  // });
+};
+
+preferenceController.updateUserPreferences = async (req, res, next) => {
+  let user_id = await handlers.userId(res.locals.username); // should be res.locals.username
+  if (!user_id.status) {
+    return next({
+      log: 'updateUserPreferences',
+      message: { err: user_id.value },
+    });
+  }
+  const clearPreviousPreferences = await handlers.clearUserPreferences(user_id.value);
+  if (clearPreviousPreferences.status) {
+    const insertRsp = await handlers.insertUserPreferences(req.body.preference, user_id);
+    if (!insertRsp.status) {
       return next({
-        log: 'addUserPreferences',
-        log: `addUserPreferences error: ${err.message}`,
-        message: { err: `HERE : Error in addUserPreferences` },
+        log: `updateUserPreferences error: ${insertRsp.value}`,
+        message: { err: `HERE : Error in updateUserPreferences` },
       });
     }
+
     res.locals.userpreferences = req.body.userpreferences;
-    next();
-  });
+    return next();
+  } else {
+    return next({
+      log: `updateUserPreferences error: ${clearPreviousPreferences.value}`,
+      message: { err: `HERE : Error in updateUserPreferences` },
+    });
+  }
 };
 
 module.exports = preferenceController;

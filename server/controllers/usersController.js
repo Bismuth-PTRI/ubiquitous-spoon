@@ -139,17 +139,14 @@ usersController.updateUserInfo = (req, res, next) => {
   const { username } = req.body;
   const { name } = req.body;
   const { email } = req.body;
-  // const { glutenFree } = req.body;
-  // const { vegan } = req.body;
-  // const { vegetarian } = req.body;
 
   // Update info in database
-  // const text = `UPDATE users SET name = '${name}', email = '${email}', gluten_free = '${glutenFree}', vegan = '${vegan}', vegetarian = '${vegetarian}' WHERE username = '${username}'`;
   const text = `UPDATE users SET name = '${name}', email = '${email}' WHERE username = '${username}'`;
   pool.query(text, (err, response) => {
     if (err) {
       return next(err);
     }
+    res.locals.username = username;
     next();
   });
 };
