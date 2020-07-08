@@ -14,7 +14,7 @@ import { Form, Checkbox } from 'antd';
 const mapStateToProps = (state) => {
   return {
     items: state.food.diets,
-    userPreferences: state.user.foodPrefrence,
+    userPreferences: state.user.foodPreference,
   };
 };
 

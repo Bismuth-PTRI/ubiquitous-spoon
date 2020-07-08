@@ -21,7 +21,7 @@ auth.logout = (props) => {
   props.clearUser();
 };
 
-auth.silentRefreshTimer = async (token_expiry, username) => {
+auth.silentRefreshTimer = (token_expiry, username) => {
   const url = '/api/refresh_token';
 
   // Take the expiration time from the JWT - current time - 10 secs
@@ -29,7 +29,7 @@ auth.silentRefreshTimer = async (token_expiry, username) => {
   const intervalTime = token_expiry * 1000 - Date.now() - 10000;
 
   // Call /refresh_token 2min & 50sec after initial call
-  setInterval(function () {
+  const id = setInterval(function () {
     fetch(url, {
       method: 'POST',
       headers: {

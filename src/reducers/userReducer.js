@@ -19,7 +19,7 @@ const initialState = {
   vegan: null,
   vegetarian: null,
   userInfo: {},
-  foodPrefrence: {},
+  foodPreference: {},
   signUpState: '',
 };
 
@@ -48,7 +48,7 @@ const userReducer = (state = initialState, action) => {
         return usrPrfs;
       }, []);
       const username = action.payload.username;
-      return { ...state, username, foodPrefrence: foodPrf };
+      return { ...state, username, foodPreference: foodPrf };
 
     case types.SET_USERPREFS:
       const email = action.payload.email;
@@ -83,11 +83,11 @@ const userReducer = (state = initialState, action) => {
         Updates foodPreference key of the redux state based on the type of 
         preference (Diets or Intolerance)
       */
-      const { foodPrefrence } = state;
+      const { foodPreference } = state;
       return {
         ...state,
-        foodPrefrence: {
-          ...foodPrefrence,
+        foodPreference: {
+          ...foodPreference,
           [Object.keys(action.payload || { diet: [] })[0]]: Object.values(
             action.payload || { diet: [] }
           )[0],
